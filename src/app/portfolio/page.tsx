@@ -1,41 +1,76 @@
 "use client"
 
 import Image from 'next/image'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useState } from 'react'
-import { Camera, Video, Play } from 'lucide-react'
+import { Camera, Video, Play, Layers } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { projects, type Project } from '@/data/projects'
 import { CustomLightbox } from '@/components/custom-lightbox'
+
+type CategoryType = 'photography' | 'video-production' | 'weddings'
 
 export default function Portfolio() {
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [currentProject, setCurrentProject] = useState<Project | null>(null)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [activeCategory, setActiveCategory] = useState<CategoryType>('photography')
 
-  // Group projects by service type
-  const familyPortraits = projects.filter(p => p.serviceType === 'family-portraits')
-  const brandedVideos = projects.filter(p => p.serviceType === 'branded-marketing-videos')
-  const weddings = projects.filter(p => p.serviceType === 'weddings')
+  // Group projects by category
+  const projectsByCategory = {
+    'photography': projects.filter(p => p.category === 'photography'),
+    'video-production': projects.filter(p => p.category === 'video-production'),
+    'weddings': projects.filter(p => p.category === 'weddings')
+  }
+
+  // Group projects by section within categories
+  const groupProjectsBySections = (categoryProjects: Project[]) => {
+    const grouped = categoryProjects.reduce((acc, project) => {
+      if (!acc[project.section]) {
+        acc[project.section] = []
+      }
+      acc[project.section].push(project)
+      return acc
+    }, {} as Record<string, Project[]>)
+    return grouped
+  }
+
+  const categoryLabels = {
+    'photography': 'Photography',
+    'video-production': 'Video Production',
+    'weddings': 'Weddings'
+  }
+
+  const categoryDescriptions = {
+    'photography': 'Professional photography services capturing life\'s most precious moments with artistic vision and technical excellence.',
+    'video-production': 'Dynamic video production solutions for brands, businesses, and personal projects with cinematic storytelling.',
+    'weddings': 'Complete wedding documentation combining photography and videography to preserve your most important day.'
+  }
+
+  const sectionLabels = {
+    'family-portraits': 'Family Portraits',
+    'senior-yearbook': 'Senior/Yearbook Photos',
+    'corporate-headshots': 'Corporate Headshots',
+    'branded-photoshoots': 'Branded Photoshoots',
+    'pet-photos': 'Pet Photos',
+    'branded-marketing-video': 'Branded Marketing Video',
+    'training-videos': 'Training Videos',
+    'podcasts': 'Podcasts',
+    'corporate-events': 'Corporate Events',
+    'personal-events': 'Personal Events',
+    'wedding-photo-video': 'Wedding Photo & Video'
+  }
 
   const handleProjectClick = (project: Project) => {
     setCurrentProject(project)
     setCurrentImageIndex(0)
-    
-    if (project.mediaType === 'photo') {
-      setLightboxOpen(true)
-    } else {
-      // For videos, open in new tab or handle differently
-      if (project.videoUrl) {
-        window.open(project.videoUrl, '_blank')
-      }
-    }
+    setLightboxOpen(true)
   }
 
   const ProjectCard = ({ project }: { project: Project }) => (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.5 }}
       className="group cursor-pointer"
       onClick={() => handleProjectClick(project)}
@@ -56,13 +91,15 @@ export default function Portfolio() {
         <div className="absolute bottom-3 right-3 p-2 bg-black/80 rounded-full text-white">
           {project.mediaType === 'video' ? (
             <Video className="h-4 w-4" />
+          ) : project.mediaType === 'hybrid' ? (
+            <Layers className="h-4 w-4" />
           ) : (
             <Camera className="h-4 w-4" />
           )}
         </div>
 
         {/* Play button for videos */}
-        {project.mediaType === 'video' && (
+        {(project.mediaType === 'video' || project.mediaType === 'hybrid') && (
           <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <div className="p-4 bg-white/90 rounded-full">
               <Play className="h-8 w-8 text-foreground ml-1" />
@@ -80,38 +117,10 @@ export default function Portfolio() {
     </motion.div>
   )
 
-  const ProjectSection = ({ 
-    title, 
-    projects, 
-    description 
-  }: { 
-    title: string
-    projects: Project[]
-    description: string 
-  }) => (
-    <section className="mb-16 md:mb-24">
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-        className="text-center mb-12"
-      >
-        <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-          {title}
-        </h2>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          {description}
-        </p>
-      </motion.div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {projects.map((project) => (
-          <ProjectCard key={project.id} project={project} />
-        ))}
-      </div>
-    </section>
-  )
+  const currentProjects = projectsByCategory[activeCategory]
+  const groupedProjects = activeCategory === 'weddings' 
+    ? { 'wedding-photo-video': currentProjects }
+    : groupProjectsBySections(currentProjects)
 
   return (
     <div className="min-h-screen bg-background">
@@ -125,34 +134,103 @@ export default function Portfolio() {
             className="text-center max-w-4xl mx-auto"
           >
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6">
-              Our Portfolio
+              Portfolio
             </h1>
             <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed">
-              Explore our collection of visual stories, from intimate family moments to grand celebrations and compelling brand narratives.
+              Explore this collection of visual stories, from intimate family moments to grand celebrations and compelling brand narratives.
             </p>
           </motion.div>
         </div>
       </section>
 
-      {/* Project Sections */}
+      {/* Navigation and Portfolio Content */}
       <div className="container mx-auto px-4 pb-16 md:pb-24">
-        <ProjectSection
-          title="Family Portraits"
-          projects={familyPortraits}
-          description="Capturing the authentic connections and precious moments that define your family's unique story."
-        />
+        {/* Category Navigation */}
+        <div className="flex justify-center mb-12">
+          <div className="flex flex-wrap justify-center gap-2 p-1 bg-muted rounded-lg">
+            {Object.entries(categoryLabels).map(([key, label]) => (
+              <Button
+                key={key}
+                variant={activeCategory === key ? "default" : "ghost"}
+                onClick={() => setActiveCategory(key as CategoryType)}
+                className={`px-6 py-2 rounded-md transition-all duration-200 ${
+                  activeCategory === key 
+                    ? 'bg-primary text-primary-foreground shadow-sm' 
+                    : 'hover:bg-background'
+                }`}
+              >
+                {label}
+              </Button>
+            ))}
+          </div>
+        </div>
 
-        <ProjectSection
-          title="Branded Marketing Videos"
-          projects={brandedVideos}
-          description="Dynamic visual storytelling that brings your brand to life and connects with your audience."
-        />
+        {/* Carousel Container */}
+        <div className="overflow-hidden">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeCategory}
+              initial={{ x: 300, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: -300, opacity: 0 }}
+              transition={{ 
+                type: "spring",
+                stiffness: 300,
+                damping: 30,
+                duration: 0.3
+              }}
+            >
+              {/* Category Description */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.1 }}
+                className="text-center mb-12">
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+                  {categoryLabels[activeCategory]}
+                </h2>
+                <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                  {categoryDescriptions[activeCategory]}
+                </p>
+              </motion.div>
 
-        <ProjectSection
-          title="Weddings"
-          projects={weddings}
-          description="Preserving the magic, emotion, and beauty of your most important day through both photography and videography."
-        />
+              {/* Sections */}
+              <div className="space-y-16">
+                {Object.entries(groupedProjects).map(([sectionKey, sectionProjects], sectionIndex) => (
+                  <motion.div
+                    key={sectionKey}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.2 + (sectionIndex * 0.1) }}
+                  >
+                    {/* Section Header - Hide for weddings since there's only one section */}
+                    {activeCategory !== 'weddings' && (
+                      <div className="mb-8">
+                        <h3 className="text-2xl md:text-3xl font-semibold text-foreground mb-2">
+                          {sectionLabels[sectionKey as keyof typeof sectionLabels]}
+                        </h3>
+                      </div>
+                    )}
+
+                    {/* Projects Grid */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                      {sectionProjects.map((project, index) => (
+                        <motion.div
+                          key={project.id}
+                          initial={{ opacity: 0, x: 20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.3 + (sectionIndex * 0.1) + (index * 0.05) }}
+                        >
+                          <ProjectCard project={project} />
+                        </motion.div>
+                      ))}
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
       </div>
 
       {/* Custom Lightbox */}
