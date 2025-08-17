@@ -23,21 +23,21 @@ export const services = [
 
 export const homeServiceCardData = [
   {
-    icon: () => <Camera className="h-8 w-8" />,
+    icon: Camera,
     title: "Portrait Photography",
     description: "Individual, family, and senior portraits",
     price: "Starting at $200",
     href: "/services/portrait",
   },
   {
-    icon: () => <Heart className="h-8 w-8" />,
+    icon: Heart,
     title: "Wedding Photography",
     description: "Complete wedding day coverage",
     price: "Starting at $1,500",
     href: "/services/wedding",
   },
   {
-    icon: () => <Users className="h-8 w-8" />,
+    icon: Users,
     title: "Commercial Photography",
     description: "Business and real estate photography",
     price: "Starting at $300",

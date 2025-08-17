@@ -35,7 +35,7 @@ export default function HomeServices() {
               <div className="h-full text-center p-6 rounded-lg border bg-card hover:shadow-lg transition-shadow">
                 <div className="flex justify-center mb-4">
                   <div className="p-3 bg-primary/10 rounded-full text-primary">
-                    <service.icon />
+                    <service.icon className="h-8 w-8" />
                   </div>
                 </div>
                 <h3 className="text-xl font-semibold mb-2">{service.title}</h3>
