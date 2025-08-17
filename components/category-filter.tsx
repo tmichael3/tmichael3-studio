@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
-import { ProjectCard } from '@/components/project-card'
+import { ProjectCard } from '@/components/ProjectCard'
 import { type Project } from '@/data/projects'
 
 interface CategoryFilterProps {
