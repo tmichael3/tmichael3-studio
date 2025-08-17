@@ -7,24 +7,17 @@ import { CategoryFilter } from '@/components/category-filter'
 import { CustomProjectsHero } from '@/components/custom-projects-hero'
 import { useState, useMemo } from 'react'
 import { CustomLightbox } from '@/components/custom-lightbox'
-import { type Project } from '@/data/projects'
 import { Heart, Star } from 'lucide-react'
-import { useProjects } from '@/components/projects-provider'
+import { getWeddingProjects, type Project } from '@/lib/projects'
 import { weddingFilterCategories } from '@/data/constants'
 
 export default function WeddingPage() {
-  const { projects } = useProjects()
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [currentProject, setCurrentProject] = useState<Project | null>(null)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
 
   // Filter projects for wedding photography and videography
-  const weddingProjects = useMemo(() => 
-    projects.filter(project => 
-      project.category === 'weddings' || 
-      (project.category === 'photography' && project.section === 'wedding-photo-video')
-    ), [projects]
-  )
+  const weddingProjects = getWeddingProjects()
 
   // Define filter categories for wedding projects
   const filterCategories = useMemo(() => [

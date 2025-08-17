@@ -4,13 +4,12 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { reviews, type Review } from '@/data/reviews'
 import { ProjectCard } from '@/components/project-card'
 import { CustomLightbox } from '@/components/custom-lightbox'
-import { useProjects } from '@/components/projects-provider'
-import { type Project } from '@/data/projects'
+import { getRecentProjects, type Project } from '@/lib/projects'
 
 export default function Home() {
   const [hoveredButton, setHoveredButton] = useState<number | null>(null)
@@ -18,30 +17,9 @@ export default function Home() {
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [currentProject, setCurrentProject] = useState<Project | null>(null)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
-  const { projects } = useProjects()
 
   // Get 8 recent projects for Recent Work section (deterministic)
-  const recentProjects = useMemo(() => {
-    // Use a deterministic approach - take every nth project to get variety
-    const step = Math.max(1, Math.floor(projects.length / 8))
-    const selected: Project[] = []
-    
-    for (let i = 0; i < projects.length && selected.length < 8; i += step) {
-      selected.push(projects[i])
-    }
-    
-    // If we need more projects, fill from the beginning
-    while (selected.length < 8 && selected.length < projects.length) {
-      const remaining = projects.filter(p => !selected.find(s => s.id === p.id))
-      if (remaining.length > 0) {
-        selected.push(remaining[0])
-      } else {
-        break
-      }
-    }
-    
-    return selected
-  }, [projects])
+  const recentProjects = getRecentProjects()
 
   const handleProjectClick = (project: Project) => {
     setCurrentProject(project)

@@ -2,8 +2,8 @@
 
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
-import { useProjects } from '@/components/projects-provider'
-import { useState, useEffect, useMemo } from 'react'
+import { getHeroBackgroundImages } from '@/lib/projects'
+import { useState, useEffect } from 'react'
 import { type ServicePageHeroData } from '@/data/site-settings'
 import { siteSettings } from '@/data/site-settings'
 
@@ -13,28 +13,13 @@ interface CustomProjectsHeroProps {
 }
 
 export function CustomProjectsHero({ serviceKey, heroData }: CustomProjectsHeroProps) {
-  const { projects } = useProjects()
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
 
   // Use provided heroData or get from site settings
   const data = heroData || siteSettings.servicePageHeros[serviceKey]
   
   // Get background images from projects matching the filter categories
-  const backgroundImages = useMemo(() => {
-    const categoryProjects = projects.filter(project => 
-      data.filterCategories.some((category: string) => 
-        project.section === category || project.category === category
-      )
-    )
-    
-    // Extract thumbnail URLs, filter out placeholder URLs for better visuals
-    const images = categoryProjects
-      .map(project => project.thumbnailUrl)
-      .filter(url => url && !url.includes('placeholder'))
-    
-    // If no real images, fall back to a default or use placeholders
-    return images.length > 0 ? images : ['/placeholders/photo-placeholder.svg']
-  }, [projects, data.filterCategories])
+  const backgroundImages = getHeroBackgroundImages(data.filterCategories)
 
   // Auto-rotate background images
   useEffect(() => {

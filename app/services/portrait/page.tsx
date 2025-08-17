@@ -5,10 +5,9 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { CategoryFilter } from '@/components/category-filter'
 import { CustomProjectsHero } from '@/components/custom-projects-hero'
-import { useProjects } from '@/components/projects-provider'
 import { useState, useMemo } from 'react'
 import { CustomLightbox } from '@/components/custom-lightbox'
-import { type Project } from '@/data/projects'
+import { getPortraitProjects, type Project } from '@/lib/projects'
 import { sectionLabels, portraitFilterCategories } from '@/data/constants'
 import { Heart, Users, Camera } from 'lucide-react'
 
@@ -17,15 +16,8 @@ export default function PortraitPage() {
   const [currentProject, setCurrentProject] = useState<Project | null>(null)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
 
-  const { projects } = useProjects()
-
-  // Get portrait-related projects using memoization
-  const portraitProjects = useMemo(() => {
-    return projects.filter(project => 
-      project.category === 'photography' && 
-      ['family-portraits', 'senior-yearbook', 'corporate-headshots', 'pet-photos', 'personal-events'].includes(project.section)
-    )
-  }, [projects])
+  // Get portrait-related projects
+  const portraitProjects = getPortraitProjects()
 
   // Define filter categories for portrait projects
   const filterCategories = useMemo(() => [
