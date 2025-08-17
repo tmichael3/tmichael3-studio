@@ -1,5 +1,6 @@
 "use client"
 
+import React from 'react'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { Camera, Video, Play, Layers } from 'lucide-react'
@@ -11,7 +12,7 @@ interface ProjectCardProps {
   onClick?: (project: Project) => void
 }
 
-export function ProjectCard({ project, priority = false, onClick }: ProjectCardProps) {
+const ProjectCard = React.memo(function ProjectCard({ project, priority = false, onClick }: ProjectCardProps) {
   // Validate thumbnailUrl and provide fallback
   const thumbnailSrc = project.thumbnailUrl && project.thumbnailUrl.trim() !== '' 
     ? project.thumbnailUrl 
@@ -39,6 +40,7 @@ export function ProjectCard({ project, priority = false, onClick }: ProjectCardP
           className="object-cover transition-transform duration-300 group-hover:scale-110"
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
           priority={priority}
+          loading={priority ? undefined : "lazy"}
         />
 
         {/* Media type indicator */}
@@ -52,22 +54,25 @@ export function ProjectCard({ project, priority = false, onClick }: ProjectCardP
           )}
         </div>
 
-        {/* Play button for videos */}
+        {/* Hover overlay - only show play icon for video content */}
         {(project.mediaType === 'video' || project.mediaType === 'hybrid') && (
-          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <div className="p-4 bg-white/90 rounded-full">
-              <Play className="h-8 w-8 text-foreground ml-1" />
-            </div>
+          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+            <Play className="h-12 w-12 text-white" />
           </div>
         )}
+      </div>
 
-        {/* Title overlay */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
-          <h3 className="text-white font-semibold text-lg leading-tight">
-            {project.title}
-          </h3>
-        </div>
+      {/* Project info */}
+      <div className="mt-3">
+        <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">
+          {project.title}
+        </h3>
+        <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+          {project.description}
+        </p>
       </div>
     </motion.div>
   )
-}
+})
+
+export { ProjectCard }

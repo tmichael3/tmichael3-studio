@@ -3,11 +3,13 @@
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { projects } from '@/data/projects'
-import { ProjectCard } from '@/components/project-card'
-import { useState } from 'react'
+import { CategoryFilter } from '@/components/category-filter'
+import { CustomProjectsHero } from '@/components/custom-projects-hero'
+import { useProjects } from '@/components/projects-provider'
+import { useState, useMemo } from 'react'
 import { CustomLightbox } from '@/components/custom-lightbox'
 import { type Project } from '@/data/projects'
+import { commercialFilterCategories } from '@/data/constants'
 import { Building2, Camera, Palette, Zap, Clock, Users } from 'lucide-react'
 
 export default function CommercialPage() {
@@ -15,11 +17,68 @@ export default function CommercialPage() {
   const [currentProject, setCurrentProject] = useState<Project | null>(null)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
 
-  // Filter projects for commercial photography
-  const commercialProjects = projects.filter(project => 
-    project.category === 'photography' && 
-    ['real-estate', 'commercial', 'corporate'].includes(project.section)
-  )
+  const { projects } = useProjects()
+
+  // Get commercial-related projects using memoization - include both photography and video production
+  const commercialProjects = useMemo(() => {
+    return projects.filter(project => 
+      (project.category === 'photography' && 
+       ['real-estate', 'commercial', 'corporate-headshots', 'branded-photoshoots', 'corporate-events'].includes(project.section)) ||
+      (project.category === 'video-production' && 
+       ['branded-marketing-video', 'training-videos', 'corporate-events'].includes(project.section))
+    )
+  }, [projects])
+
+  // Define filter categories for commercial projects
+  const filterCategories = useMemo(() => [
+    {
+      key: 'all',
+      label: commercialFilterCategories.all,
+      description: 'Explore our complete commercial portfolio showcasing business photography and videography services across various industries.'
+    },
+    {
+      key: 'corporate-headshots',
+      label: commercialFilterCategories['corporate-headshots'],
+      filter: (project: Project) => project.section === 'corporate-headshots',
+      description: 'Professional headshots for executives, teams, and corporate branding.'
+    },
+    {
+      key: 'branded-photoshoots',
+      label: commercialFilterCategories['branded-photoshoots'],
+      filter: (project: Project) => project.section === 'branded-photoshoots',
+      description: 'Creative brand photography that tells your company story and showcases your products.'
+    },
+    {
+      key: 'branded-marketing-video',
+      label: commercialFilterCategories['branded-marketing-video'],
+      filter: (project: Project) => project.section === 'branded-marketing-video' || project.mediaType === 'video',
+      description: 'Professional video content for marketing, branding, and promotional campaigns.'
+    },
+    {
+      key: 'training-videos',
+      label: commercialFilterCategories['training-videos'],
+      filter: (project: Project) => project.section === 'training-videos',
+      description: 'Educational and training video content for internal and external use.'
+    },
+    {
+      key: 'corporate-events',
+      label: commercialFilterCategories['corporate-events'],
+      filter: (project: Project) => project.section === 'corporate-events',
+      description: 'Event photography and videography for conferences, meetings, and corporate gatherings.'
+    },
+    {
+      key: 'real-estate',
+      label: commercialFilterCategories['real-estate'],
+      filter: (project: Project) => project.section === 'real-estate',
+      description: 'Professional real estate photography showcasing properties at their best.'
+    },
+    {
+      key: 'commercial',
+      label: commercialFilterCategories['commercial'],
+      filter: (project: Project) => project.section === 'commercial',
+      description: 'Commercial photography for marketing, advertising, and business promotion.'
+    }
+  ], [])
 
   const handleProjectClick = (project: Project) => {
     setCurrentProject(project)
@@ -116,71 +175,7 @@ export default function CommercialPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <section className="relative py-24 md:py-32 bg-gradient-to-br from-background/90 to-muted/90">
-        {/* Background Image */}
-        <div 
-          className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-20"
-          style={{
-            backgroundImage: "url('/_Projects/06_Alfred_Real_Estate/234Alfred-16.webp')"
-          }}
-        />
-        <div className="container mx-auto px-4 relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center max-w-4xl mx-auto"
-          >
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6">
-              Commercial Services
-            </h1>
-            <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed mb-8">
-              We offer professional photography and videography services that elevate your brand and drive business results through compelling visual storytelling.
-            </p>
-            <Button size="lg" className="text-lg px-8 py-3">
-              Discuss Your Project
-            </Button>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Recent Commercial Work Section */}
-      <section className="py-16 md:py-24">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Recent Commercial Work
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              A showcase of recent commercial photography and videography projects across various industries.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {commercialProjects.map((project, index) => (
-              <motion.div
-                key={project.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-              >
-                <ProjectCard 
-                  project={project} 
-                  priority={index < 4}
-                  onClick={handleProjectClick}
-                />
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <CustomProjectsHero serviceKey="commercial" />
 
       {/* Retainer Packages Section */}
       <section className="py-16 md:py-24">
@@ -188,7 +183,7 @@ export default function CommercialPage() {
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            transition={{ duration: 0.6 }}
             className="text-center mb-16"
           >
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
@@ -199,7 +194,8 @@ export default function CommercialPage() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
+          {/* Updated grid to show 3 columns on desktop, matching wedding packages */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {retainerPackages.map((pkg, index) => (
               <motion.div
                 key={pkg.title}
@@ -218,10 +214,7 @@ export default function CommercialPage() {
                 <Card className={`h-full ${pkg.popular ? 'border-primary border-2 shadow-lg' : ''}`}>
                   <CardHeader className="text-center">
                     <CardTitle className="text-2xl">{pkg.title}</CardTitle>
-                    <div className="flex items-baseline justify-center gap-1">
-                      <span className="text-3xl md:text-4xl font-bold text-foreground">{pkg.price}</span>
-                      <span className="text-muted-foreground">{pkg.period}</span>
-                    </div>
+                    <div className="text-3xl md:text-4xl font-bold text-foreground">{pkg.price}<span className="text-muted-foreground text-lg">{pkg.period}</span></div>
                     <CardDescription className="text-base">
                       {pkg.description}
                     </CardDescription>
@@ -246,6 +239,19 @@ export default function CommercialPage() {
               </motion.div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Commercial Examples with Category Filter */}
+      <section className="py-16 md:py-24">
+        <div className="container mx-auto px-4">
+          <CategoryFilter
+            projects={commercialProjects}
+            categories={filterCategories}
+            onProjectClick={handleProjectClick}
+            title="Recent Commercial Work"
+            description="A showcase of recent commercial photography and videography projects across various industries and business needs."
+          />
         </div>
       </section>
 

@@ -35,30 +35,30 @@ You are an expert Next.js developer assisting with building tmichael3.studio, a 
 Persistent theme toggle using localStorage, prevents flash with `<head>` script in layout. Solid backgrounds (no transparency/backdrop-blur) for header/footer.
 
 **Styles:**  
-Define all in `tailwind.config.js` (OKLCH colors, Inter font, `darkMode: 'class'`). Use `cn` utility with tailwind-merge for classes. Mobile-first approach.
+Define all in `tailwind.config.js` (OKLCH colors, Inter font, `darkMode: 'class'`). Use `cn` utility with tailwind-merge for classes. Mobile-first approach. Group long classes into reusable utils (e.g., in lib/utils.ts).
 
 **Components:**  
 All components in `components/` directory. Use "use client" directive only when needed for interactivity.
 
 **Content:**  
-Hardcoded in `data/` files. Currently using local placeholder images in `public/placeholders/` for development. Will migrate to Cloudflare bucket URLs via Next.js Image component when ready for production.
+Hardcoded in `data/` files. Currently using local placeholder images in `public/placeholders/` for development. Will migrate to Cloudflare bucket URLs via Next.js Image component when ready for production. Centralize labels/descriptions to data/constants.ts (e.g., categoryLabels, sectionLabels). Convert projects.ts to JSON for easier editing; load with import projects from '@/data/projects.json' assert { type: 'json' };. Add ProjectsProvider using Context API in app/layout.tsx to share projects site-wide, reducing imports.
 
 **Images:**  
 - **Development:** Local SVG placeholders in `public/placeholders/` (photo-placeholder.svg, video-placeholder.svg, portrait-placeholder.svg, hero-placeholder.svg)  
-- **Production:** Will use Cloudflare bucket URLs with Next.js Image component  
-- **Structure:** Portfolio uses custom lightbox component with project galleries, thumbnail navigation, and 90% opacity background
+- **Production:** Will use Cloudflare bucket URLs with Next.js Image component. Cloudflare info: "tmichael3-studio/public", Public Development URL=https://pub-2efb6280d4bb4559a3019d1923351cfb.r2.dev
+- **Structure:** Portfolio uses custom lightbox component with project galleries, thumbnail navigation, and 90% opacity background. Configure next.config.js for Cloudflare remote patterns: remotePatterns: [{ protocol: 'https', hostname: '**cloudflare.com' }]. Migrate placeholders/real media to R2 buckets. Ensure loading="lazy" on non-priority images.
 
 **Portfolio:**  
-Custom lightbox "project-viewer" with enhanced features - project info display, thumbnail navigation, keyboard controls, smooth animations via framer-motion. Supports both photo galleries and video projects.
+Custom lightbox "project-viewer" with enhanced features - project info display, thumbnail navigation, keyboard controls, smooth animations via framer-motion. Supports both photo galleries and video projects. Use useMemo for mediaArray. Simplify conditionals into one media flow. Add swipe gestures (react-swipeable) for mobile. Implement lazy-loading for thumbnails. Memoize groupings/filters with useMemo. Use Suspense for grids if adding async fetches later.
 
 **Constraints:**  
-No backend, forms, database, auth, or blog. Focus on responsive design, SEO metadata, performance, accessibility.
+No backend, forms, database, auth, or blog. Focus on responsive design, SEO metadata, performance, accessibility. Add alts everywhere, focus trapping in lightbox, ARIA for nav. Add dynamic Metadata in pages (e.g., Portfolio: title based on category).
 
 **Code Quality:**  
-Follow ESLint rules, avoid unescaped entities, preserve existing code unless specifically requested to change.
+Follow ESLint rules, avoid unescaped entities, preserve existing code unless specifically requested to change. Memoize components where appropriate (e.g., React.memo on ProjectCard.tsx). On Home Page: Memoize review carousel. Add lazy-loading to images.
 
 **Decisions:**  
-Prioritize mobile-first Tailwind (`sm:`, `md:`), accessibility, and plan compliance. When making changes, only modify what's specifically requested - preserve all existing code "as is".
+Prioritize mobile-first Tailwind (`sm:`, `md:`), accessibility, and plan compliance. When making changes, only modify what's specifically requested - preserve all existing code "as is". Run npx tailwindcss --purge in build. Run Lighthouse for scores >90; fix shifts/hitches.
 
 **Development Notes:**  
 
@@ -70,3 +70,7 @@ Prioritize mobile-first Tailwind (`sm:`, `md:`), accessibility, and plan complia
 
 **Custom Lightbox Implementation:**  
 - Built custom lightbox component
+
+**Complete Pages:**  
+- Services Subpages: Use filtered projects (e.g., Portrait shows family/senior sections). Add descriptions, pricing, CTAs.  
+- About/Contact: Static bio; Contact with form (use Formspree for no-backend submission).  

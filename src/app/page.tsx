@@ -4,13 +4,50 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { reviews, type Review } from '@/data/reviews'
+import { ProjectCard } from '@/components/project-card'
+import { CustomLightbox } from '@/components/custom-lightbox'
+import { useProjects } from '@/components/projects-provider'
+import { type Project } from '@/data/projects'
 
 export default function Home() {
   const [hoveredButton, setHoveredButton] = useState<number | null>(null)
   const [currentReview, setCurrentReview] = useState(0)
+  const [lightboxOpen, setLightboxOpen] = useState(false)
+  const [currentProject, setCurrentProject] = useState<Project | null>(null)
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const { projects } = useProjects()
+
+  // Get 8 recent projects for Recent Work section (deterministic)
+  const recentProjects = useMemo(() => {
+    // Use a deterministic approach - take every nth project to get variety
+    const step = Math.max(1, Math.floor(projects.length / 8))
+    const selected: Project[] = []
+    
+    for (let i = 0; i < projects.length && selected.length < 8; i += step) {
+      selected.push(projects[i])
+    }
+    
+    // If we need more projects, fill from the beginning
+    while (selected.length < 8 && selected.length < projects.length) {
+      const remaining = projects.filter(p => !selected.find(s => s.id === p.id))
+      if (remaining.length > 0) {
+        selected.push(remaining[0])
+      } else {
+        break
+      }
+    }
+    
+    return selected
+  }, [projects])
+
+  const handleProjectClick = (project: Project) => {
+    setCurrentProject(project)
+    setCurrentImageIndex(0)
+    setLightboxOpen(true)
+  }
 
   const services = [
     {
@@ -112,10 +149,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Content Container with Flexbox */}
-      <div className="flex flex-col py-16 md:py-24 gap-16 md:gap-24">
+      {/* Content Container */}
+      <div>
         {/* Photography & Videography Description Section */}
-        <section>
+        <section className="py-16 md:py-24">
           <div className="container mx-auto px-4">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -134,8 +171,66 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Recent Work Section */}
+        <section className="py-16 md:py-24">
+          <div className="container mx-auto px-4">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="text-center mb-12"
+            >
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+                Recent Work
+              </h2>
+              <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed mb-8">
+                Discover our latest photography and videography projects showcasing our diverse range of work across all specialties.
+              </p>
+              
+              {/* Recent Projects Grid */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12"
+              >
+                {recentProjects.map((project, index) => (
+                  <motion.div
+                    key={project.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: index * 0.1 }}
+                  >
+                    <ProjectCard 
+                      project={project} 
+                      onClick={() => handleProjectClick(project)}
+                    />
+                  </motion.div>
+                ))}
+              </motion.div>
+              
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                className="mt-12"
+              >
+                <Button asChild size="lg" className="px-8 py-3">
+                  <Link href="/portfolio">
+                    View Full Portfolio
+                  </Link>
+                </Button>
+              </motion.div>
+            </motion.div>
+          </div>
+        </section>
+
         {/* Services Overview Section */}
-        <section>
+        <section className="py-16 md:py-24">
           <div className="container mx-auto px-4">
             <motion.div
               initial={{ opacity: 0, y: 50 }}
@@ -214,7 +309,7 @@ export default function Home() {
         </section>
 
         {/* Client Reviews Section */}
-        <section>
+        <section className="py-16 md:py-24">
           <div className="container mx-auto px-4">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -316,6 +411,14 @@ export default function Home() {
           </div>
         </section>
       </div>
+
+      {/* Custom Lightbox */}
+      <CustomLightbox
+        isOpen={lightboxOpen}
+        onClose={() => setLightboxOpen(false)}
+        project={currentProject}
+        initialIndex={currentImageIndex}
+      />
     </div>
   )
 }

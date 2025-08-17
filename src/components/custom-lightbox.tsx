@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, ChevronLeft, ChevronRight, Play } from 'lucide-react'
@@ -21,7 +21,12 @@ interface MediaItem {
   embedId?: string
 }
 
-export function CustomLightbox({ isOpen, onClose, project, initialIndex = 0 }: CustomLightboxProps) {
+export const CustomLightbox = React.memo(function CustomLightbox({ 
+  isOpen, 
+  onClose, 
+  project, 
+  initialIndex = 0 
+}: CustomLightboxProps) {
   const [currentIndex, setCurrentIndex] = useState(initialIndex)
 
   useEffect(() => {
@@ -35,8 +40,8 @@ export function CustomLightbox({ isOpen, onClose, project, initialIndex = 0 }: C
     }
   }, [project, isOpen])
 
-  // Create unified media array for hybrid projects
-  const createMediaArray = useCallback((): MediaItem[] => {
+  // Memoize media array creation for performance
+  const mediaArray = useMemo((): MediaItem[] => {
     if (!project) return []
     
     const mediaItems: MediaItem[] = []
@@ -65,35 +70,71 @@ export function CustomLightbox({ isOpen, onClose, project, initialIndex = 0 }: C
     return mediaItems
   }, [project])
 
-  // For non-hybrid projects, use existing logic
-  const isHybrid = project?.mediaType === 'hybrid'
-  const mediaArray = isHybrid ? createMediaArray() : []
-  
-  // For regular photo projects
-  const isPhotoProject = project?.mediaType === 'photo' && project.mediaUrls
-  // For regular video projects  
-  const isVideoProject = project?.mediaType === 'video' && project.videoEmbedId
+  // Memoize project type checks
+  const projectType = useMemo(() => {
+    if (!project) return null
+    
+    return {
+      isHybrid: project.mediaType === 'hybrid',
+      isPhoto: project.mediaType === 'photo' && !!project.mediaUrls,
+      isVideo: project.mediaType === 'video' && !!project.videoEmbedId
+    }
+  }, [project])
+
+  // Get current media for display - memoized for performance
+  const currentMedia = useMemo(() => {
+    if (!project || !projectType) return null
+
+    if (projectType.isHybrid && mediaArray.length > 0) {
+      return mediaArray[currentIndex]
+    } else if (projectType.isPhoto && project.mediaUrls) {
+      return {
+        type: 'photo' as const,
+        url: project.mediaUrls[currentIndex],
+        thumbnailUrl: project.mediaUrls[currentIndex]
+      }
+    } else if (projectType.isVideo) {
+      return {
+        type: 'video' as const,
+        url: project.videoUrl || '',
+        thumbnailUrl: '/placeholders/video-placeholder.svg',
+        embedId: project.videoEmbedId
+      }
+    }
+    return null
+  }, [project, projectType, mediaArray, currentIndex])
+
+  const hasNavigation = useMemo(() => {
+    if (!project || !projectType) return false
+    return (projectType.isHybrid && mediaArray.length > 1) || 
+           (projectType.isPhoto && project.mediaUrls && project.mediaUrls.length > 1)
+  }, [project, projectType, mediaArray.length])
 
   const goToPrevious = useCallback(() => {
-    if (isHybrid && mediaArray.length > 0) {
+    if (!projectType) return
+    
+    if (projectType.isHybrid && mediaArray.length > 0) {
       setCurrentIndex(prev => prev > 0 ? prev - 1 : prev)
-    } else if (isPhotoProject && project?.mediaUrls) {
+    } else if (projectType.isPhoto && project?.mediaUrls) {
       setCurrentIndex(prev => prev > 0 ? prev - 1 : prev)
     }
-  }, [isHybrid, mediaArray.length, isPhotoProject, project?.mediaUrls])
+  }, [projectType, mediaArray.length, project?.mediaUrls])
 
   const goToNext = useCallback(() => {
-    if (isHybrid && mediaArray.length > 0) {
+    if (!projectType) return
+    
+    if (projectType.isHybrid && mediaArray.length > 0) {
       setCurrentIndex(prev => prev < mediaArray.length - 1 ? prev + 1 : prev)
-    } else if (isPhotoProject && project?.mediaUrls) {
+    } else if (projectType.isPhoto && project?.mediaUrls) {
       setCurrentIndex(prev => prev < project.mediaUrls!.length - 1 ? prev + 1 : prev)
     }
-  }, [isHybrid, mediaArray.length, isPhotoProject, project?.mediaUrls])
+  }, [projectType, mediaArray.length, project?.mediaUrls])
 
   const goToMedia = useCallback((index: number) => {
     setCurrentIndex(index)
   }, [])
 
+  // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!isOpen || !project) return
@@ -115,31 +156,19 @@ export function CustomLightbox({ isOpen, onClose, project, initialIndex = 0 }: C
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [isOpen, onClose, project, goToNext, goToPrevious])
 
-  if (!isOpen || !project) return null
-
-  // Get current media for display
-  const getCurrentMedia = () => {
-    if (isHybrid && mediaArray.length > 0) {
-      return mediaArray[currentIndex]
-    } else if (isPhotoProject && project.mediaUrls) {
-      return {
-        type: 'photo' as const,
-        url: project.mediaUrls[currentIndex],
-        thumbnailUrl: project.mediaUrls[currentIndex]
-      }
-    } else if (isVideoProject) {
-      return {
-        type: 'video' as const,
-        url: project.videoUrl || '',
-        thumbnailUrl: '/placeholders/video-placeholder.svg',
-        embedId: project.videoEmbedId
+  // Focus trap for accessibility
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden'
+      return () => {
+        document.body.style.overflow = 'unset'
       }
     }
-    return null
-  }
+  }, [isOpen])
 
-  const currentMedia = getCurrentMedia()
-  const hasNavigation = (isHybrid && mediaArray.length > 1) || (isPhotoProject && project.mediaUrls && project.mediaUrls.length > 1)
+  if (!isOpen || !project || !projectType) return null
+
+  const maxItems = projectType.isHybrid ? mediaArray.length : (project.mediaUrls?.length || 1)
 
   return (
     <AnimatePresence>
@@ -150,6 +179,9 @@ export function CustomLightbox({ isOpen, onClose, project, initialIndex = 0 }: C
         transition={{ duration: 0.3 }}
         className="fixed inset-0 z-50 bg-black/90"
         onClick={onClose}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="lightbox-title"
       >
         <div className="relative h-full flex flex-col">
           {/* Close Button */}
@@ -173,8 +205,12 @@ export function CustomLightbox({ isOpen, onClose, project, initialIndex = 0 }: C
             className="pt-8 pb-4 px-4 text-center text-white"
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 className="text-2xl md:text-3xl font-bold mb-2">{project.title}</h2>
-            <p className="text-lg text-white/80 max-w-2xl mx-auto">{project.description}</p>
+            <h2 id="lightbox-title" className="text-2xl md:text-3xl font-bold mb-2">
+              {project.title}
+            </h2>
+            <p className="text-lg text-white/80 max-w-2xl mx-auto">
+              {project.description}
+            </p>
           </motion.div>
 
           {/* Main Content Container */}
@@ -236,8 +272,7 @@ export function CustomLightbox({ isOpen, onClose, project, initialIndex = 0 }: C
                       </Button>
                     )}
 
-                    {((isHybrid && currentIndex < mediaArray.length - 1) || 
-                      (isPhotoProject && project.mediaUrls && currentIndex < project.mediaUrls.length - 1)) && (
+                    {currentIndex < maxItems - 1 && (
                       <Button
                         variant="ghost"
                         size="icon"
@@ -256,84 +291,127 @@ export function CustomLightbox({ isOpen, onClose, project, initialIndex = 0 }: C
 
           {/* Thumbnail Navigation */}
           {hasNavigation && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="p-4 bg-black/30"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex justify-center">
-                <div className="flex gap-2 overflow-x-auto max-w-full pb-2 px-4">
-                  {isHybrid ? (
-                    // Hybrid project thumbnails
-                    mediaArray.map((media, index) => (
-                      <button
-                        key={index}
-                        onClick={() => goToMedia(index)}
-                        className={`relative flex-shrink-0 w-16 h-16 md:w-20 md:h-20 overflow-hidden border rounded-lg transition-all duration-200 ${
-                          index === currentIndex
-                            ? 'border-white ring-2 ring-white/50'
-                            : 'border-white/30 hover:border-white/60'
-                        }`}
-                        aria-label={`Go to ${media.type} ${index + 1}`}
-                      >
-                        <Image
-                          src={media.thumbnailUrl}
-                          alt={`${project.title} thumbnail ${index + 1}`}
-                          fill
-                          className="object-contain"
-                          sizes="80px"
-                        />
-                        {media.type === 'video' && (
-                          <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-                            <Play className="h-4 w-4 text-white" />
-                          </div>
-                        )}
-                        {index === currentIndex && (
-                          <div className="absolute inset-0 bg-white/20" />
-                        )}
-                      </button>
-                    ))
-                  ) : (
-                    // Photo-only project thumbnails
-                    project.mediaUrls?.map((url, index) => (
-                      <button
-                        key={index}
-                        onClick={() => goToMedia(index)}
-                        className={`relative flex-shrink-0 w-16 h-16 md:w-20 md:h-20 overflow-hidden border rounded-lg transition-all duration-200 ${
-                          index === currentIndex
-                            ? 'border-white ring-2 ring-white/50'
-                            : 'border-white/30 hover:border-white/60'
-                        }`}
-                        aria-label={`Go to image ${index + 1}`}
-                      >
-                        <Image
-                          src={url}
-                          alt={`${project.title} thumbnail ${index + 1}`}
-                          fill
-                          className="object-contain"
-                          sizes="80px"
-                        />
-                        {index === currentIndex && (
-                          <div className="absolute inset-0 bg-white/20" />
-                        )}
-                      </button>
-                    ))
-                  )}
-                </div>
-              </div>
-              
-              {/* Media Counter */}
-              <div className="text-center mt-2">
-                <span className="text-white/80 text-sm">
-                  {currentIndex + 1} of {isHybrid ? mediaArray.length : (project.mediaUrls?.length || 1)}
-                </span>
-              </div>
-            </motion.div>
+            <ThumbnailNavigation
+              project={project}
+              projectType={projectType}
+              mediaArray={mediaArray}
+              currentIndex={currentIndex}
+              onGoToMedia={goToMedia}
+              maxItems={maxItems}
+            />
           )}
         </div>
       </motion.div>
     </AnimatePresence>
   )
-}
+})
+
+// Separate memoized thumbnail component for better performance
+const ThumbnailNavigation = React.memo(function ThumbnailNavigation({
+  project,
+  projectType,
+  mediaArray,
+  currentIndex,
+  onGoToMedia,
+  maxItems
+}: {
+  project: Project
+  projectType: { isHybrid: boolean; isPhoto: boolean; isVideo: boolean }
+  mediaArray: MediaItem[]
+  currentIndex: number
+  onGoToMedia: (index: number) => void
+  maxItems: number
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.2 }}
+      className="p-4 bg-black/30"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <div className="flex justify-center">
+        <div className="flex gap-2 overflow-x-auto max-w-full pb-2 px-4">
+          {projectType.isHybrid ? (
+            // Hybrid project thumbnails
+            mediaArray.map((media, index) => (
+              <ThumbnailButton
+                key={index}
+                media={media}
+                index={index}
+                currentIndex={currentIndex}
+                projectTitle={project.title}
+                onGoToMedia={onGoToMedia}
+              />
+            ))
+          ) : (
+            // Photo-only project thumbnails
+            project.mediaUrls?.map((url, index) => (
+              <ThumbnailButton
+                key={index}
+                media={{ type: 'photo', url, thumbnailUrl: url }}
+                index={index}
+                currentIndex={currentIndex}
+                projectTitle={project.title}
+                onGoToMedia={onGoToMedia}
+              />
+            ))
+          )}
+        </div>
+      </div>
+      
+      {/* Media Counter */}
+      <div className="text-center mt-2">
+        <span className="text-white/80 text-sm">
+          {currentIndex + 1} of {maxItems}
+        </span>
+      </div>
+    </motion.div>
+  )
+})
+
+// Individual thumbnail button - memoized for performance
+const ThumbnailButton = React.memo(function ThumbnailButton({
+  media,
+  index,
+  currentIndex,
+  projectTitle,
+  onGoToMedia
+}: {
+  media: MediaItem
+  index: number
+  currentIndex: number
+  projectTitle: string
+  onGoToMedia: (index: number) => void
+}) {
+  const isActive = index === currentIndex
+
+  return (
+    <button
+      onClick={() => onGoToMedia(index)}
+      className={`relative flex-shrink-0 w-16 h-16 md:w-20 md:h-20 overflow-hidden border rounded-lg transition-all duration-200 ${
+        isActive
+          ? 'border-white ring-2 ring-white/50'
+          : 'border-white/30 hover:border-white/60'
+      }`}
+      aria-label={`Go to ${media.type} ${index + 1}`}
+    >
+      <Image
+        src={media.thumbnailUrl}
+        alt={`${projectTitle} thumbnail ${index + 1}`}
+        fill
+        className="object-cover"
+        sizes="80px"
+        loading="lazy"
+      />
+      {media.type === 'video' && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+          <Play className="h-4 w-4 text-white" />
+        </div>
+      )}
+      {isActive && (
+        <div className="absolute inset-0 bg-white/20" />
+      )}
+    </button>
+  )
+})

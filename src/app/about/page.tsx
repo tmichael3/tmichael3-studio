@@ -4,9 +4,10 @@ import { motion } from 'framer-motion'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Camera, Video } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
+import { aboutInfo } from '@/data/constants'
 
 export default function AboutPage() {
   const aboutImages = [
@@ -42,12 +43,14 @@ export default function AboutPage() {
     {
       title: "Professional Photography",
       description: "Specializing in portraits, weddings, and commercial photography with a focus on capturing authentic moments and emotions.",
-      years: "2019 - Present"
+      years: aboutInfo.experience,
+      icon: Camera
     },
     {
       title: "Video Production",
       description: "Creating compelling visual stories through cinematography and video editing for various clients and projects.",
-      years: "2020 - Present"
+      years: aboutInfo.experience,
+      icon: Video
     },
     {
       title: "Commercial Work",
@@ -68,12 +71,11 @@ export default function AboutPage() {
               transition={{ duration: 0.8 }}
             >
               <h1 className="text-4xl md:text-5xl font-bold mb-6">
-                Hi, I&apos;m <span className="text-primary">TJ Michael</span>
+                Hi, I&apos;m <span className="text-primary">{aboutInfo.name}</span>
               </h1>
+              <h2 className="text-xl text-primary mb-4">{aboutInfo.title}</h2>
               <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-                A passionate photographer and videographer dedicated to capturing life&apos;s most precious moments. 
-                With years of experience in portrait, wedding, and commercial photography, I bring creativity, 
-                technical expertise, and a keen eye for detail to every project.
+                {aboutInfo.bio}
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button asChild size="lg">

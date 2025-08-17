@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Mail, Phone, MapPin, Clock } from 'lucide-react'
 import { useState } from 'react'
+import { contactInfo as contactData } from '@/data/constants'
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -37,23 +38,23 @@ export default function ContactPage() {
     setFormData(prev => ({ ...prev, [field]: value }))
   }
 
-  const contactInfo = [
+  const contactDetails = [
     {
       icon: Mail,
       title: "Email",
-      details: "hello@tmichael3.studio",
+      details: contactData.email,
       description: "Send us a message anytime"
     },
     {
       icon: Phone,
       title: "Phone",
-      details: "(555) 123-4567",
+      details: contactData.phone,
       description: "Call during business hours"
     },
     {
       icon: MapPin,
       title: "Location",
-      details: "Available Nationwide",
+      details: contactData.location,
       description: "Travel available for events"
     },
     {
@@ -208,7 +209,7 @@ export default function ContactPage() {
               </div>
 
               <div className="grid grid-cols-1 gap-6">
-                {contactInfo.map((info, index) => (
+                {contactDetails.map((info, index) => (
                   <motion.div
                     key={info.title}
                     initial={{ opacity: 0, y: 20 }}

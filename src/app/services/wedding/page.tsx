@@ -3,31 +3,49 @@
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { projects } from '@/data/projects'
-import { ProjectCard } from '@/components/project-card'
-import { useState } from 'react'
+import { CategoryFilter } from '@/components/category-filter'
+import { CustomProjectsHero } from '@/components/custom-projects-hero'
+import { useState, useMemo } from 'react'
 import { CustomLightbox } from '@/components/custom-lightbox'
 import { type Project } from '@/data/projects'
 import { Heart, Star } from 'lucide-react'
+import { useProjects } from '@/components/projects-provider'
+import { weddingFilterCategories } from '@/data/constants'
 
 export default function WeddingPage() {
+  const { projects } = useProjects()
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [currentProject, setCurrentProject] = useState<Project | null>(null)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
-  const [currentPage, setCurrentPage] = useState(0)
 
-  // Filter projects for wedding photography
-  const weddingProjects = projects.filter(project => 
-    project.category === 'weddings' || 
-    (project.category === 'photography' && project.section === 'wedding-photo-video')
+  // Filter projects for wedding photography and videography
+  const weddingProjects = useMemo(() => 
+    projects.filter(project => 
+      project.category === 'weddings' || 
+      (project.category === 'photography' && project.section === 'wedding-photo-video')
+    ), [projects]
   )
 
-  // Split into photo and video projects
-  const photoProjects = weddingProjects.filter(p => p.mediaType === 'photo')
-  const videoProjects = weddingProjects.filter(p => p.mediaType === 'video')
-
-  const itemsPerPage = 8
-  const totalPhotoPages = Math.ceil(photoProjects.length / itemsPerPage)
+  // Define filter categories for wedding projects
+  const filterCategories = useMemo(() => [
+    {
+      key: 'all',
+      label: weddingFilterCategories.all,
+      description: 'Explore our complete wedding portfolio showcasing both photography and videography work.'
+    },
+    {
+      key: 'photography',
+      label: weddingFilterCategories.photography,
+      filter: (project: Project) => project.mediaType === 'photo' || project.mediaType === 'hybrid',
+      description: 'Beautiful wedding photography capturing every precious moment and emotion of your special day.'
+    },
+    {
+      key: 'videography', 
+      label: weddingFilterCategories.videography,
+      filter: (project: Project) => project.mediaType === 'video' || project.mediaType === 'hybrid',
+      description: 'Cinematic wedding films that tell the story of your love with emotion and artistry.'
+    }
+  ], [])
 
   const handleProjectClick = (project: Project) => {
     setCurrentProject(project)
@@ -92,26 +110,7 @@ export default function WeddingPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <section className="relative py-24 md:py-32">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center max-w-4xl mx-auto"
-          >
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6">
-              Wedding Photography
-            </h1>
-            <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed mb-8">
-              Capturing the magic of your special day with timeless elegance, from intimate ceremonies to grand celebrations.
-            </p>
-            <Button size="lg" className="text-lg px-8 py-3">
-              View Packages
-            </Button>
-          </motion.div>
-        </div>
-      </section>
+      <CustomProjectsHero serviceKey="wedding" />
 
       {/* Wedding Packages Section */}
       <section className="py-16 md:py-24">
@@ -178,104 +177,7 @@ export default function WeddingPage() {
         </div>
       </section>
 
-      {/* Portfolio Gallery - Photos */}
-      <section className="py-16 md:py-24">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Wedding Photography
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              A collection of beautiful moments captured from recent wedding celebrations.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8 max-w-4xl mx-auto">
-            {photoProjects
-              .slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage)
-              .map((project, index) => (
-                <motion.div
-                  key={project.id}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-50px" }}
-                  transition={{ duration: 0.6, delay: index * 0.05 }}
-                >
-                  <ProjectCard 
-                    project={project} 
-                    priority={index < 4}
-                    onClick={handleProjectClick}
-                  />
-                </motion.div>
-              ))}
-          </div>
-
-          {/* Photo Pagination */}
-          {totalPhotoPages > 1 && (
-            <div className="flex justify-center gap-2">
-              {Array.from({ length: totalPhotoPages }, (_, i) => (
-                <Button
-                  key={i}
-                  variant={currentPage === i ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setCurrentPage(i)}
-                  className="w-10 h-10"
-                >
-                  {i + 1}
-                </Button>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* Portfolio Gallery - Videos */}
-      {videoProjects.length > 0 && (
-        <section className="py-16 md:py-24 bg-muted/50">
-          <div className="container mx-auto px-4">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="text-center mb-16"
-            >
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                Wedding Videography
-              </h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Cinematic wedding films that capture the emotion and story of your special day.
-              </p>
-            </motion.div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-              {videoProjects.map((project, index) => (
-                <motion.div
-                  key={project.id}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                >
-                  <ProjectCard 
-                    project={project} 
-                    priority={index < 3}
-                    onClick={handleProjectClick}
-                  />
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* CTA Section */}
+      {/* CTA Section - Moved above portfolio */}
       <section className="py-16 md:py-24">
         <div className="container mx-auto px-4">
           <motion.div
@@ -286,7 +188,7 @@ export default function WeddingPage() {
             className="text-center max-w-3xl mx-auto"
           >
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
-              Ready to Plan Your Wedding Photography?
+              Ready to Book Your Wedding?
             </h2>
             <p className="text-lg text-muted-foreground mb-8">
               Let&apos;s create beautiful memories together. Contact us to discuss your wedding photography needs and find the perfect package for your special day.
@@ -301,6 +203,19 @@ export default function WeddingPage() {
               </Button>
             </div>
           </motion.div>
+        </div>
+      </section>
+
+      {/* Portfolio Gallery with Category Filter */}
+      <section className="py-16 md:py-24">
+        <div className="container mx-auto px-4">
+          <CategoryFilter
+            projects={weddingProjects}
+            categories={filterCategories}
+            onProjectClick={handleProjectClick}
+            title="Wedding Examples"
+            description="Explore our recent wedding work across photography and videography to see our style and approach."
+          />
         </div>
       </section>
 

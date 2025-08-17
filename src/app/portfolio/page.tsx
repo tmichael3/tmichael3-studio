@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { projects, type Project } from '@/data/projects'
 import { CustomLightbox } from '@/components/custom-lightbox'
 import { ProjectCard } from '@/components/project-card'
+import { CustomProjectsHero } from '@/components/custom-projects-hero'
 
 type CategoryType = 'all' | 'photography' | 'video-production' | 'weddings'
 
@@ -106,48 +107,47 @@ export default function Portfolio() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Page Header */}
-      <section className="py-16 md:py-24">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center max-w-4xl mx-auto"
-          >
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6">
-              Portfolio
-            </h1>
-            <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed">
-              Explore this collection of visual stories, from intimate family moments to grand celebrations and compelling brand narratives.
-            </p>
-          </motion.div>
-        </div>
-      </section>
+      {/* Hero Section */}
+      <CustomProjectsHero serviceKey="portfolio" />
 
       {/* Navigation and Portfolio Content */}
-      <div className="container mx-auto px-4 pb-16 md:pb-24">
-        {/* Category Navigation */}
-        <div className="flex justify-center mb-12">
-          <div className="flex flex-wrap justify-center gap-2 p-1 bg-muted rounded-lg">
-            {Object.entries(categoryLabels).map(([key, label]) => (
-              <Button
-                key={key}
-                variant={activeCategory === key ? "default" : "ghost"}
-                onClick={() => setActiveCategory(key as CategoryType)}
-                className={`px-6 py-2 rounded-md transition-all duration-200 ${
-                  activeCategory === key 
-                    ? 'bg-primary text-primary-foreground shadow-sm' 
-                    : 'hover:bg-background'
-                }`}
-              >
-                {label}
-              </Button>
-            ))}
-          </div>
-        </div>
+      <div className="container mx-auto px-4 py-16 md:py-24">
+        {/* Category Title and Description */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-16"
+        >
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+            {categoryLabels[activeCategory]}
+          </h2>
+          <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed mb-8">
+            {categoryDescriptions[activeCategory]}
+          </p>
 
-        {/* Carousel Container */}
+          {/* Category Navigation */}
+          <div className="flex justify-center">
+            <div className="flex flex-wrap justify-center gap-2 p-1 bg-muted rounded-lg">
+              {Object.entries(categoryLabels).map(([key, label]) => (
+                <Button
+                  key={key}
+                  variant={activeCategory === key ? "default" : "ghost"}
+                  onClick={() => setActiveCategory(key as CategoryType)}
+                  className={`px-6 py-2 rounded-md transition-all duration-200 ${
+                    activeCategory === key 
+                      ? 'bg-primary text-primary-foreground shadow-sm' 
+                      : 'hover:bg-background'
+                  }`}
+                >
+                  {label}
+                </Button>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Portfolio Content */}
         <div className="overflow-hidden">
           <AnimatePresence mode="wait">
             <motion.div
@@ -162,19 +162,6 @@ export default function Portfolio() {
                 duration: 0.3
               }}
             >
-              {/* Category Description */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.1 }}
-                className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                  {categoryLabels[activeCategory]}
-                </h2>
-                <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                  {categoryDescriptions[activeCategory]}
-                </p>
-              </motion.div>
 
               {/* Sections */}
               {activeCategory === 'weddings' ? (

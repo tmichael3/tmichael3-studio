@@ -3,11 +3,13 @@
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { projects } from '@/data/projects'
-import { ProjectCard } from '@/components/project-card'
-import { useState } from 'react'
+import { CategoryFilter } from '@/components/category-filter'
+import { CustomProjectsHero } from '@/components/custom-projects-hero'
+import { useProjects } from '@/components/projects-provider'
+import { useState, useMemo } from 'react'
 import { CustomLightbox } from '@/components/custom-lightbox'
 import { type Project } from '@/data/projects'
+import { sectionLabels, portraitFilterCategories } from '@/data/constants'
 import { Heart, Users, Camera } from 'lucide-react'
 
 export default function PortraitPage() {
@@ -15,11 +17,54 @@ export default function PortraitPage() {
   const [currentProject, setCurrentProject] = useState<Project | null>(null)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
 
-  // Filter projects for portrait photography
-  const portraitProjects = projects.filter(project => 
-    project.category === 'photography' && 
-    ['senior-photos', 'personal-events', 'portraits'].includes(project.section)
-  )
+  const { projects } = useProjects()
+
+  // Get portrait-related projects using memoization
+  const portraitProjects = useMemo(() => {
+    return projects.filter(project => 
+      project.category === 'photography' && 
+      ['family-portraits', 'senior-yearbook', 'corporate-headshots', 'pet-photos', 'personal-events'].includes(project.section)
+    )
+  }, [projects])
+
+  // Define filter categories for portrait projects
+  const filterCategories = useMemo(() => [
+    {
+      key: 'all',
+      label: portraitFilterCategories.all,
+      description: 'Explore our complete portrait portfolio showcasing various styles and sessions.'
+    },
+    {
+      key: 'family-portraits',
+      label: portraitFilterCategories['family-portraits'],
+      filter: (project: Project) => project.section === 'family-portraits',
+      description: 'Beautiful family portraits capturing love and connection in natural settings.'
+    },
+    {
+      key: 'senior-yearbook',
+      label: portraitFilterCategories['senior-yearbook'],
+      filter: (project: Project) => project.section === 'senior-yearbook',
+      description: 'Professional senior portraits celebrating this important milestone with style.'
+    },
+    {
+      key: 'pet-photos',
+      label: portraitFilterCategories['pet-photos'],
+      filter: (project: Project) => project.section === 'pet-photos',
+      description: 'Adorable pet photography sessions capturing your furry family members.'
+    },
+    {
+      key: 'personal-events',
+      label: portraitFilterCategories['personal-events'],
+      filter: (project: Project) => project.section === 'personal-events',
+      description: 'Personal milestone events and celebrations captured with artistic vision.'
+    },
+    {
+      key: 'corporate-headshots',
+      label: portraitFilterCategories['corporate-headshots'],
+      filter: (project: Project) => project.section === 'corporate-headshots',
+      description: 'Professional headshots and portrait sessions for business and personal branding.'
+    }
+  ], [])
 
   const handleProjectClick = (project: Project) => {
     setCurrentProject(project)
@@ -30,92 +75,28 @@ export default function PortraitPage() {
   const services = [
     {
       icon: Heart,
-      title: "Family Portraits",
+      title: sectionLabels['family-portraits'],
       description: "Capture the love and connection between family members in beautiful, natural settings.",
       features: ["Multiple location options", "Group and individual shots", "Extended family sessions", "Pet-friendly sessions"]
     },
     {
       icon: Camera,
-      title: "Senior Photos",
+      title: sectionLabels['senior-yearbook'],
       description: "Celebrate this milestone with professional senior portraits that showcase personality and style.",
       features: ["Multiple outfit changes", "Various locations", "Individual styling consultation", "Digital gallery included"]
     },
     {
       icon: Users,
-      title: "Pet Photography",
-      description: "Professional portraits of your beloved pets in their favorite environments.",
-      features: ["Indoor and outdoor options", "Action and posed shots", "Individual or family sessions", "Quick turnaround time"]
+      title: sectionLabels['corporate-headshots'],
+      description: "Professional headshots for business professionals and corporate teams.",
+      features: ["Studio or on-location", "Consistent lighting", "Multiple expressions", "High-resolution files"]
     }
   ]
 
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <section className="relative py-24 md:py-32 bg-gradient-to-br from-background/90 to-muted/90">
-        {/* Background Image */}
-        <div 
-          className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-20"
-          style={{
-            backgroundImage: "url('/_Projects/02_Lauren_SP/Lauren+Senior-70.webp')"
-          }}
-        />
-        <div className="container mx-auto px-4 relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center max-w-4xl mx-auto"
-          >
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6">
-              Portrait Photography
-            </h1>
-            <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed mb-8">
-              Professional portraits that capture the essence of who you are, creating timeless memories for families, individuals, and beloved pets.
-            </p>
-            <Button size="lg" className="text-lg px-8 py-3">
-              Book Your Session
-            </Button>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Recent Portrait Work Section */}
-      <section className="py-16 md:py-24">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Recent Portrait Work
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              A selection of recent portrait sessions showcasing our style and approach.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {portraitProjects.map((project, index) => (
-              <motion.div
-                key={project.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-              >
-                <ProjectCard 
-                  project={project} 
-                  priority={index < 4}
-                  onClick={handleProjectClick}
-                />
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <CustomProjectsHero serviceKey="portrait" />
 
       {/* Services Section */}
       <section className="py-16 md:py-24">
@@ -139,16 +120,17 @@ export default function PortraitPage() {
               <motion.div
                 key={service.title}
                 initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.4 + (index * 0.1) }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
               >
-                <Card className="h-full hover:shadow-lg transition-shadow duration-300">
-                  <CardHeader className="text-center">
-                    <div className="mx-auto mb-4 p-3 bg-primary/10 rounded-full w-fit">
-                      <service.icon className="h-8 w-8 text-primary" />
+                <Card className="h-full hover:shadow-lg transition-shadow">
+                  <CardHeader>
+                    <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                      <service.icon className="h-6 w-6 text-primary" />
                     </div>
                     <CardTitle className="text-xl">{service.title}</CardTitle>
-                    <CardDescription className="text-base">
+                    <CardDescription>
                       {service.description}
                     </CardDescription>
                   </CardHeader>
@@ -166,6 +148,19 @@ export default function PortraitPage() {
               </motion.div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Portrait Examples with Category Filter */}
+      <section className="py-16 md:py-24">
+        <div className="container mx-auto px-4">
+          <CategoryFilter
+            projects={portraitProjects}
+            categories={filterCategories}
+            onProjectClick={handleProjectClick}
+            title="Portrait Examples"
+            description="Browse our recent portrait work across different styles and sessions to see our approach and quality."
+          />
         </div>
       </section>
 
