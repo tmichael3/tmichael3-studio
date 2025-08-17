@@ -4,6 +4,7 @@ import "./globals.css";
 import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
 import { ProjectsProvider } from '@/components/projects-provider';
+import { ThemeProvider } from '@/components/theme-provider';
 import { cn } from '@/lib/utils'
 import { siteMetadata } from '@/data/metadata'
 
@@ -19,17 +20,6 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              try {
-                const theme = localStorage.getItem('theme') || 
-                  (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-                document.documentElement.classList.toggle('dark', theme === 'dark');
-              } catch {}
-            `,
-          }}
-        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -56,15 +46,22 @@ export default function RootLayout({
         />
       </head>
       <body className={cn(inter.className, 'min-h-screen bg-background')}>
-        <ProjectsProvider>
-          <div className="flex min-h-screen flex-col">
-            <Header />
-            <main className="flex-1">
-              {children}
-            </main>
-            <Footer />
-          </div>
-        </ProjectsProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <ProjectsProvider>
+            <div className="flex min-h-screen flex-col">
+              <Header />
+              <main className="flex-1">
+                {children}
+              </main>
+              <Footer />
+            </div>
+          </ProjectsProvider>
+        </ThemeProvider>
       </body>
     </html>
   )

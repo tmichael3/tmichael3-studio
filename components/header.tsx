@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
+import { useTheme } from 'next-themes'
 import { Button } from '@/components/ui/button'
 import { Menu, Moon, Sun, ChevronDown, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -9,26 +10,16 @@ import { cn } from '@/lib/utils'
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isServicesOpen, setIsServicesOpen] = useState(false)
-  const [theme, setTheme] = useState<'light' | 'dark'>('light')
+  const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
 
-  // Initialize theme immediately to prevent flash
+  // Wait until mounted to prevent hydration mismatch
   useEffect(() => {
-    // Get saved theme or default to system preference
-    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null
-    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-    const initialTheme = savedTheme || systemTheme
-    
-    setTheme(initialTheme)
-    document.documentElement.classList.toggle('dark', initialTheme === 'dark')
     setMounted(true)
   }, [])
 
   const toggleTheme = () => {
-    const newTheme = theme === 'light' ? 'dark' : 'light'
-    setTheme(newTheme)
-    localStorage.setItem('theme', newTheme)
-    document.documentElement.classList.toggle('dark', newTheme === 'dark')
+    setTheme(theme === 'light' ? 'dark' : 'light')
   }
 
   const navItems = [
@@ -135,58 +126,58 @@ export function Header() {
             </div>
           </div>
         </div>
-      </header>
 
-      {/* Mobile Navigation Dropdown */}
-      {isMobileMenuOpen && (
-        <div className="md:hidden border-b bg-background">
-          <nav className="container mx-auto">
-            <div className="divide-y divide-border">
-              {navItems.map((item) => (
-                item.submenu ? (
-                  <div key={item.label}>
-                    <button
-                      onClick={() => setIsServicesOpen(!isServicesOpen)}
-                      className="flex w-full items-center justify-center px-4 py-4 text-sm font-medium hover:bg-accent transition-colors"
+        {/* Mobile Navigation Dropdown */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden border-b bg-background">
+            <nav className="container mx-auto">
+              <div className="divide-y divide-border">
+                {navItems.map((item) => (
+                  item.submenu ? (
+                    <div key={item.label}>
+                      <button
+                        onClick={() => setIsServicesOpen(!isServicesOpen)}
+                        className="flex w-full items-center justify-center px-4 py-4 text-sm font-medium hover:bg-accent transition-colors"
+                      >
+                        <span>{item.label}</span>
+                        <ChevronRight 
+                          className={cn(
+                            "ml-2 h-4 w-4 transition-transform",
+                            isServicesOpen && "rotate-90"
+                          )} 
+                        />
+                      </button>
+                      {isServicesOpen && (
+                        <div className="bg-muted/50">
+                          {item.submenu.map((subItem) => (
+                            <Link
+                              key={subItem.href}
+                              href={subItem.href}
+                              className="flex items-center justify-center px-4 py-3 text-sm text-muted-foreground hover:text-foreground hover:bg-accent transition-colors border-t border-border/50"
+                              onClick={() => setIsMobileMenuOpen(false)}
+                            >
+                              {subItem.label}
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className="flex items-center justify-center px-4 py-4 text-sm font-medium hover:bg-accent transition-colors"
+                      onClick={() => setIsMobileMenuOpen(false)}
                     >
-                      <span>{item.label}</span>
-                      <ChevronRight 
-                        className={cn(
-                          "ml-2 h-4 w-4 transition-transform",
-                          isServicesOpen && "rotate-90"
-                        )} 
-                      />
-                    </button>
-                    {isServicesOpen && (
-                      <div className="bg-muted/50">
-                        {item.submenu.map((subItem) => (
-                          <Link
-                            key={subItem.href}
-                            href={subItem.href}
-                            className="flex items-center justify-center px-4 py-3 text-sm text-muted-foreground hover:text-foreground hover:bg-accent transition-colors border-t border-border/50"
-                            onClick={() => setIsMobileMenuOpen(false)}
-                          >
-                            {subItem.label}
-                          </Link>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className="flex items-center justify-center px-4 py-4 text-sm font-medium hover:bg-accent transition-colors"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    {item.label}
-                  </Link>
-                )
-              ))}
-            </div>
-          </nav>
-        </div>
-      )}
+                      {item.label}
+                    </Link>
+                  )
+                ))}
+              </div>
+            </nav>
+          </div>
+        )}
+      </header>
     </div>
   )
 }
