@@ -7,6 +7,7 @@ import { ProjectsProvider } from '@/components/projects-provider';
 import { ThemeProvider } from '@/components/theme-provider';
 import { cn } from '@/lib/utils'
 import { siteMetadata } from '@/data/metadata'
+import { professionalServiceSchema } from '@/data/structured-data'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -23,25 +24,7 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "ProfessionalService",
-              "name": "tmichael3.studio",
-              "description": "Professional photography and videography services",
-              "url": "https://tmichael3.studio",
-              "telephone": "(555) 123-4567",
-              "email": "hello@tmichael3.studio",
-              "address": {
-                "@type": "PostalAddress",
-                "addressCountry": "US",
-                "addressRegion": "Available nationwide"
-              },
-              "serviceType": ["Photography", "Videography", "Wedding Photography", "Portrait Photography", "Commercial Photography"],
-              "founder": {
-                "@type": "Person",
-                "name": "TJ Michael"
-              }
-            })
+            __html: JSON.stringify(professionalServiceSchema)
           }}
         />
       </head>
