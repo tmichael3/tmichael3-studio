@@ -15,17 +15,18 @@ export const projects: Project[] = [
   // PHOTOGRAPHY CATEGORY - Family Portraits
   {
     id: 1,
-    title: "The Johnson Family",
-    description: "A beautiful outdoor family session capturing three generations in their favorite park setting.",
+    title: "Kiki's Portrait Session",
+    description: "A beautiful portrait session capturing personality and style with professional lighting and artistic composition.",
     category: 'photography',
     section: 'family-portraits',
     mediaType: 'photo',
-    thumbnailUrl: "/placeholders/photo-placeholder.svg",
+    thumbnailUrl: "/_Projects/05_Kiki_Portrait/IMG_1136.webp",
     mediaUrls: [
-      "/placeholders/photo-placeholder.svg",
-      "/placeholders/photo-placeholder.svg",
-      "/placeholders/photo-placeholder.svg",
-      "/placeholders/photo-placeholder.svg"
+      "/_Projects/05_Kiki_Portrait/IMG_1136.webp",
+      "/_Projects/05_Kiki_Portrait/IMG_1157.webp",
+      "/_Projects/05_Kiki_Portrait/IMG_1395.webp",
+      "/_Projects/05_Kiki_Portrait/IMG_1434.webp",
+      "/_Projects/05_Kiki_Portrait/IMG_1446-Edit.webp"
     ]
   },
   {
@@ -92,32 +93,32 @@ export const projects: Project[] = [
   // PHOTOGRAPHY CATEGORY - Senior/Yearbook Photos
   {
     id: 6,
-    title: "Emma's Senior Session",
-    description: "Capturing the confidence and personality of a graduating senior in multiple locations.",
+    title: "Kiki's Senior Session",
+    description: "Capturing the confidence and personality of a graduating senior in multiple locations with beautiful natural lighting.",
     category: 'photography',
     section: 'senior-yearbook',
     mediaType: 'photo',
-    thumbnailUrl: "/placeholders/photo-placeholder.svg",
+    thumbnailUrl: "/_Projects/01_Kiki_SP/KikiSeniorPhoto-11.webp",
     mediaUrls: [
-      "/placeholders/photo-placeholder.svg",
-      "/placeholders/photo-placeholder.svg",
-      "/placeholders/photo-placeholder.svg",
-      "/placeholders/photo-placeholder.svg"
+      "/_Projects/01_Kiki_SP/KikiSeniorPhoto-11.webp",
+      "/_Projects/01_Kiki_SP/KikiSeniorPhoto-44.webp",
+      "/_Projects/01_Kiki_SP/KikiSeniorPhoto-49.webp",
+      "/_Projects/01_Kiki_SP/KikiSeniorPhoto-62.webp"
     ]
   },
   {
     id: 7,
-    title: "Class of 2024 Portraits",
-    description: "Professional yearbook photography session featuring diverse backgrounds and lighting setups.",
+    title: "Lauren's Senior Portraits",
+    description: "Professional senior photography session featuring diverse backgrounds and lighting setups showcasing personality and style.",
     category: 'photography',
     section: 'senior-yearbook',
     mediaType: 'photo',
-    thumbnailUrl: "/placeholders/photo-placeholder.svg",
+    thumbnailUrl: "/_Projects/02_Lauren_SP/Lauren+Senior-50.webp",
     mediaUrls: [
-      "/placeholders/photo-placeholder.svg",
-      "/placeholders/photo-placeholder.svg",
-      "/placeholders/photo-placeholder.svg",
-      "/placeholders/photo-placeholder.svg"
+      "/_Projects/02_Lauren_SP/Lauren+Senior-50.webp",
+      "/_Projects/02_Lauren_SP/Lauren+Senior-52.webp",
+      "/_Projects/02_Lauren_SP/Lauren+Senior-64.webp",
+      "/_Projects/02_Lauren_SP/Lauren+Senior-70.webp"
     ]
   },
   {
@@ -186,17 +187,15 @@ export const projects: Project[] = [
   // PHOTOGRAPHY CATEGORY - Branded Photoshoots
   {
     id: 12,
-    title: "Tech Startup Lifestyle",
-    description: "Modern lifestyle photography showcasing company culture and innovative workspace design.",
+    title: "Alfred Real Estate Photography",
+    description: "Professional real estate photography showcasing property features and architectural details with optimal lighting.",
     category: 'photography',
     section: 'branded-photoshoots',
     mediaType: 'photo',
-    thumbnailUrl: "/placeholders/photo-placeholder.svg",
+    thumbnailUrl: "/_Projects/06_Alfred_Real_Estate/234Alfred-15.webp",
     mediaUrls: [
-      "/placeholders/photo-placeholder.svg",
-      "/placeholders/photo-placeholder.svg",
-      "/placeholders/photo-placeholder.svg",
-      "/placeholders/photo-placeholder.svg"
+      "/_Projects/06_Alfred_Real_Estate/234Alfred-15.webp",
+      "/_Projects/06_Alfred_Real_Estate/234Alfred-16.webp"
     ]
   },
   {
@@ -269,10 +268,16 @@ export const projects: Project[] = [
     description: "Dynamic promotional video showcasing innovative technology solutions and company culture.",
     category: 'video-production',
     section: 'branded-marketing-video',
-    mediaType: 'video',
+    mediaType: 'hybrid',
     thumbnailUrl: "/placeholders/video-placeholder.svg",
     videoUrl: "https://vimeo.com/655932397",
-    videoEmbedId: "655932397"
+    videoEmbedId: "655932397",
+    mediaUrls: [
+      "/placeholders/video-placeholder.svg",
+      "/placeholders/video-placeholder.svg",
+      "/placeholders/video-placeholder.svg",
+      "/placeholders/video-placeholder.svg"
+    ]
   },
   {
     id: 18,
@@ -440,17 +445,16 @@ export const projects: Project[] = [
   // WEDDINGS CATEGORY - Mix of photo, video, and hybrid
   {
     id: 32,
-    title: "Sarah & Michael's Garden Wedding",
-    description: "Romantic outdoor ceremony celebrating love surrounded by blooming gardens and natural beauty.",
+    title: "Aaron & Raiven's Wedding",
+    description: "Romantic ceremony celebrating love with beautiful moments captured in elegant settings and natural lighting.",
     category: 'weddings',
     section: 'wedding-photo-video',
     mediaType: 'photo',
-    thumbnailUrl: "/placeholders/photo-placeholder.svg",
+    thumbnailUrl: "/_Projects/03_ Aaron_Raiven_Wedding/3I1A0575.webp",
     mediaUrls: [
-      "/placeholders/photo-placeholder.svg",
-      "/placeholders/photo-placeholder.svg",
-      "/placeholders/photo-placeholder.svg",
-      "/placeholders/photo-placeholder.svg"
+      "/_Projects/03_ Aaron_Raiven_Wedding/3I1A0575.webp",
+      "/_Projects/03_ Aaron_Raiven_Wedding/3I1A0577.webp",
+      "/_Projects/03_ Aaron_Raiven_Wedding/P1171951.webp"
     ]
   },
   {
@@ -466,17 +470,15 @@ export const projects: Project[] = [
   },
   {
     id: 34,
-    title: "Alex & Jamie's Beach Ceremony",
-    description: "Intimate beachside wedding celebration with stunning ocean views and golden hour lighting.",
+    title: "Elegant Wedding Ceremony",
+    description: "Beautiful wedding celebration with intimate moments and stunning photography capturing the joy of the special day.",
     category: 'weddings',
     section: 'wedding-photo-video',
     mediaType: 'photo',
-    thumbnailUrl: "/placeholders/photo-placeholder.svg",
+    thumbnailUrl: "/_Projects/04_Unknown_Wedding/IMG_5586.webp",
     mediaUrls: [
-      "/placeholders/photo-placeholder.svg",
-      "/placeholders/photo-placeholder.svg",
-      "/placeholders/photo-placeholder.svg",
-      "/placeholders/photo-placeholder.svg"
+      "/_Projects/04_Unknown_Wedding/IMG_5586.webp",
+      "/_Projects/04_Unknown_Wedding/IMG_5613.webp"
     ]
   },
   {

@@ -1,12 +1,11 @@
 "use client"
 
-import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState } from 'react'
-import { Camera, Video, Play, Layers } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { projects, type Project } from '@/data/projects'
 import { CustomLightbox } from '@/components/custom-lightbox'
+import { ProjectCard } from '@/components/project-card'
 
 type CategoryType = 'photography' | 'video-production' | 'weddings'
 
@@ -66,56 +65,6 @@ export default function Portfolio() {
     setCurrentImageIndex(0)
     setLightboxOpen(true)
   }
-
-  const ProjectCard = ({ project }: { project: Project }) => (
-    <motion.div
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.5 }}
-      className="group cursor-pointer"
-      onClick={() => handleProjectClick(project)}
-    >
-      <div className="relative aspect-[4/3] rounded-lg overflow-hidden bg-muted">
-        <Image
-          src={project.thumbnailUrl}
-          alt={project.title}
-          fill
-          className="object-cover transition-transform duration-300 group-hover:scale-105"
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-        />
-        
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
-        
-        {/* Media type indicator */}
-        <div className="absolute bottom-3 right-3 p-2 bg-black/80 rounded-full text-white">
-          {project.mediaType === 'video' ? (
-            <Video className="h-4 w-4" />
-          ) : project.mediaType === 'hybrid' ? (
-            <Layers className="h-4 w-4" />
-          ) : (
-            <Camera className="h-4 w-4" />
-          )}
-        </div>
-
-        {/* Play button for videos */}
-        {(project.mediaType === 'video' || project.mediaType === 'hybrid') && (
-          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <div className="p-4 bg-white/90 rounded-full">
-              <Play className="h-8 w-8 text-foreground ml-1" />
-            </div>
-          </div>
-        )}
-
-        {/* Title overlay */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
-          <h3 className="text-white font-semibold text-lg leading-tight">
-            {project.title}
-          </h3>
-        </div>
-      </div>
-    </motion.div>
-  )
 
   const currentProjects = projectsByCategory[activeCategory]
   const groupedProjects = activeCategory === 'weddings' 
@@ -212,19 +161,23 @@ export default function Portfolio() {
                       </div>
                     )}
 
-                    {/* Projects Grid */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                      {sectionProjects.map((project, index) => (
-                        <motion.div
-                          key={project.id}
-                          initial={{ opacity: 0, x: 20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: 0.3 + (sectionIndex * 0.1) + (index * 0.05) }}
-                        >
-                          <ProjectCard project={project} />
-                        </motion.div>
-                      ))}
-                    </div>
+                  {/* Projects Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {sectionProjects.map((project, index) => (
+                      <motion.div
+                        key={project.id}
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.3 + (sectionIndex * 0.1) + (index * 0.05) }}
+                      >
+                        <ProjectCard 
+                          project={project} 
+                          priority={sectionIndex === 0 && index < 4}
+                          onClick={handleProjectClick}
+                        />
+                      </motion.div>
+                    ))}
+                  </div>
                   </motion.div>
                 ))}
               </div>

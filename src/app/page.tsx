@@ -17,19 +17,19 @@ export default function Home() {
       title: "Portrait",
       description: "Explore Personal Photography",
       href: "/services/portrait",
-      image: "/placeholders/photo-placeholder.svg"
+      image: "/_Projects/02_Lauren_SP/Lauren+Senior-70.webp"
     },
     {
       title: "Corporate",
       description: "Discover Corporate Solutions",
       href: "/services/commercial",
-      image: "/placeholders/photo-placeholder.svg"
+      image: "/_Projects/06_Alfred_Real_Estate/234Alfred-16.webp"
     },
     {
       title: "Wedding",
       description: "Capture Your Special Day",
       href: "/services/wedding",
-      image: "/placeholders/photo-placeholder.svg"
+      image: "/_Projects/04_Unknown_Wedding/IMG_5586.webp"
     }
   ]
 
@@ -119,9 +119,8 @@ export default function Home() {
           <div className="container mx-auto px-4">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
               className="max-w-4xl mx-auto text-center space-y-8"
             >
               <h2 className="text-3xl md:text-4xl font-bold text-foreground">
