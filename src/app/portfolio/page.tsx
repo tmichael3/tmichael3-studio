@@ -7,16 +7,17 @@ import { projects, type Project } from '@/data/projects'
 import { CustomLightbox } from '@/components/custom-lightbox'
 import { ProjectCard } from '@/components/project-card'
 
-type CategoryType = 'photography' | 'video-production' | 'weddings'
+type CategoryType = 'all' | 'photography' | 'video-production' | 'weddings'
 
 export default function Portfolio() {
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [currentProject, setCurrentProject] = useState<Project | null>(null)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
-  const [activeCategory, setActiveCategory] = useState<CategoryType>('photography')
+  const [activeCategory, setActiveCategory] = useState<CategoryType>('all')
 
   // Group projects by category
   const projectsByCategory = {
+    'all': projects,
     'photography': projects.filter(p => p.category === 'photography'),
     'video-production': projects.filter(p => p.category === 'video-production'),
     'weddings': projects.filter(p => p.category === 'weddings')
@@ -35,12 +36,14 @@ export default function Portfolio() {
   }
 
   const categoryLabels = {
+    'all': 'All Work',
     'photography': 'Photography',
     'video-production': 'Video Production',
     'weddings': 'Weddings'
   }
 
   const categoryDescriptions = {
+    'all': 'Explore our complete portfolio showcasing photography and videography work across all categories and project types.',
     'photography': 'Professional photography services capturing life\'s most precious moments with artistic vision and technical excellence.',
     'video-production': 'Dynamic video production solutions for brands, businesses, and personal projects with cinematic storytelling.',
     'weddings': 'Complete wedding documentation combining photography and videography to preserve your most important day.'
@@ -48,6 +51,7 @@ export default function Portfolio() {
 
   const sectionLabels = {
     'family-portraits': 'Family Portraits',
+    'senior-photos': 'Senior Photos',
     'senior-yearbook': 'Senior/Yearbook Photos',
     'corporate-headshots': 'Corporate Headshots',
     'branded-photoshoots': 'Branded Photoshoots',
@@ -57,7 +61,15 @@ export default function Portfolio() {
     'podcasts': 'Podcasts',
     'corporate-events': 'Corporate Events',
     'personal-events': 'Personal Events',
-    'wedding-photo-video': 'Wedding Photo & Video'
+    'portraits': 'Portrait Sessions',
+    'wedding-photo-video': 'Wedding Photo & Video',
+    'wedding-photo': 'Wedding Photography',
+    'wedding-video': 'Wedding Videography',
+    'real-estate': 'Real Estate',
+    'business': 'Business Photography',
+    'photography': 'Photography Work',
+    'video-production': 'Video Production',
+    'weddings': 'Wedding Work'
   }
 
   const handleProjectClick = (project: Project) => {
@@ -67,9 +79,30 @@ export default function Portfolio() {
   }
 
   const currentProjects = projectsByCategory[activeCategory]
-  const groupedProjects = activeCategory === 'weddings' 
-    ? { 'wedding-photo-video': currentProjects }
-    : groupProjectsBySections(currentProjects)
+  
+  const groupedProjects = (() => {
+    if (activeCategory === 'all') {
+      // For "all" category, group by project category (photography, video-production, weddings)
+      const allGrouped: Record<string, Project[]> = {}
+      currentProjects.forEach(project => {
+        if (!allGrouped[project.category]) {
+          allGrouped[project.category] = []
+        }
+        allGrouped[project.category].push(project)
+      })
+      return allGrouped
+    } else if (activeCategory === 'weddings') {
+      // For weddings, split into photo and video columns
+      const photoProjects = currentProjects.filter(p => p.mediaType === 'photo')
+      const videoProjects = currentProjects.filter(p => p.mediaType === 'video')
+      return {
+        'wedding-photo': photoProjects,
+        'wedding-video': videoProjects
+      }
+    } else {
+      return groupProjectsBySections(currentProjects)
+    }
+  })()
 
   return (
     <div className="min-h-screen bg-background">
@@ -144,43 +177,77 @@ export default function Portfolio() {
               </motion.div>
 
               {/* Sections */}
-              <div className="space-y-16">
-                {Object.entries(groupedProjects).map(([sectionKey, sectionProjects], sectionIndex) => (
-                  <motion.div
-                    key={sectionKey}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.2 + (sectionIndex * 0.1) }}
-                  >
-                    {/* Section Header - Hide for weddings since there's only one section */}
-                    {activeCategory !== 'weddings' && (
+              {activeCategory === 'weddings' ? (
+                // Special two-column layout for weddings
+                <div className="grid md:grid-cols-2 gap-12">
+                  {Object.entries(groupedProjects).map(([sectionKey, sectionProjects], sectionIndex) => (
+                    <motion.div
+                      key={sectionKey}
+                      initial={{ opacity: 0, x: sectionIndex === 0 ? -30 : 30 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.2 + (sectionIndex * 0.1) }}
+                    >
                       <div className="mb-8">
                         <h3 className="text-2xl md:text-3xl font-semibold text-foreground mb-2">
                           {sectionLabels[sectionKey as keyof typeof sectionLabels]}
                         </h3>
                       </div>
-                    )}
+                      
+                      <div className="grid grid-cols-1 gap-6">
+                        {sectionProjects.map((project, index) => (
+                          <motion.div
+                            key={project.id}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.3 + (sectionIndex * 0.1) + (index * 0.05) }}
+                          >
+                            <ProjectCard 
+                              project={project} 
+                              priority={index < 2}
+                              onClick={handleProjectClick}
+                            />
+                          </motion.div>
+                        ))}
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              ) : (
+                // Standard layout for other categories
+                <div className="space-y-16">
+                  {Object.entries(groupedProjects).map(([sectionKey, sectionProjects], sectionIndex) => (
+                    <motion.div
+                      key={sectionKey}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.2 + (sectionIndex * 0.1) }}
+                    >
+                      <div className="mb-8">
+                        <h3 className="text-2xl md:text-3xl font-semibold text-foreground mb-2">
+                          {sectionLabels[sectionKey as keyof typeof sectionLabels]}
+                        </h3>
+                      </div>
 
-                  {/* Projects Grid */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    {sectionProjects.map((project, index) => (
-                      <motion.div
-                        key={project.id}
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.3 + (sectionIndex * 0.1) + (index * 0.05) }}
-                      >
-                        <ProjectCard 
-                          project={project} 
-                          priority={sectionIndex === 0 && index < 4}
-                          onClick={handleProjectClick}
-                        />
-                      </motion.div>
-                    ))}
-                  </div>
-                  </motion.div>
-                ))}
-              </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        {sectionProjects.map((project, index) => (
+                          <motion.div
+                            key={project.id}
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.3 + (sectionIndex * 0.1) + (index * 0.05) }}
+                          >
+                            <ProjectCard 
+                              project={project} 
+                              priority={sectionIndex === 0 && index < 4}
+                              onClick={handleProjectClick}
+                            />
+                          </motion.div>
+                        ))}
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
             </motion.div>
           </AnimatePresence>
         </div>

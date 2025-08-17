@@ -3,12 +3,6 @@
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
 import { Menu, Moon, Sun, ChevronDown, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -68,21 +62,23 @@ export function Header() {
               <nav className="flex items-center space-x-6">
                 {navItems.map((item) => (
                   item.submenu ? (
-                    <DropdownMenu key={item.label}>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="flex items-center gap-1">
-                          {item.label}
-                          <ChevronDown className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent>
+                    <div key={item.label} className="relative group">
+                      <div className="flex items-center gap-1 text-sm font-medium transition-colors hover:text-primary cursor-pointer px-2 py-1">
+                        {item.label}
+                        <ChevronDown className="h-4 w-4" />
+                      </div>
+                      <div className="absolute top-full left-0 mt-1 w-48 bg-popover border rounded-md shadow-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                         {item.submenu.map((subItem) => (
-                          <DropdownMenuItem key={subItem.href} asChild>
-                            <Link href={subItem.href}>{subItem.label}</Link>
-                          </DropdownMenuItem>
+                          <Link
+                            key={subItem.href}
+                            href={subItem.href}
+                            className="block px-4 py-2 text-sm text-popover-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+                          >
+                            {subItem.label}
+                          </Link>
                         ))}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                      </div>
+                    </div>
                   ) : (
                     <Link
                       key={item.href}

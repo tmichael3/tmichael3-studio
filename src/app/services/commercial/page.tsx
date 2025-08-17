@@ -29,6 +29,22 @@ export default function CommercialPage() {
 
   const retainerPackages = [
     {
+      title: "Starter",
+      price: "$1,500",
+      period: "/month",
+      description: "Perfect for small businesses just getting started with professional photography.",
+      features: [
+        "2 photography sessions per month",
+        "15 edited high-resolution images",
+        "Basic brand consultation",
+        "Social media sized images",
+        "72-hour turnaround",
+        "Email support"
+      ],
+      buttonText: "Get Started",
+      popular: false
+    },
+    {
       title: "Essential",
       price: "$2,500",
       period: "/month",
@@ -41,8 +57,8 @@ export default function CommercialPage() {
         "48-hour turnaround",
         "Email support"
       ],
-      buttonText: "Get Started",
-      popular: false
+      buttonText: "Most Popular",
+      popular: true
     },
     {
       title: "Professional",
@@ -59,8 +75,8 @@ export default function CommercialPage() {
         "Monthly strategy review",
         "Custom editing styles"
       ],
-      buttonText: "Most Popular",
-      popular: true
+      buttonText: "Scale Your Brand",
+      popular: false
     }
   ]
 
@@ -100,8 +116,15 @@ export default function CommercialPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <section className="relative py-24 md:py-32">
-        <div className="container mx-auto px-4">
+      <section className="relative py-24 md:py-32 bg-gradient-to-br from-background/90 to-muted/90">
+        {/* Background Image */}
+        <div 
+          className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-20"
+          style={{
+            backgroundImage: "url('/_Projects/06_Alfred_Real_Estate/234Alfred-16.webp')"
+          }}
+        />
+        <div className="container mx-auto px-4 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -109,15 +132,53 @@ export default function CommercialPage() {
             className="text-center max-w-4xl mx-auto"
           >
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6">
-              Commercial Photography
+              Commercial Services
             </h1>
             <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed mb-8">
-              Professional commercial photography services that elevate your brand and drive business results through compelling visual storytelling.
+              We offer professional photography and videography services that elevate your brand and drive business results through compelling visual storytelling.
             </p>
             <Button size="lg" className="text-lg px-8 py-3">
               Discuss Your Project
             </Button>
           </motion.div>
+        </div>
+      </section>
+
+      {/* Recent Commercial Work Section */}
+      <section className="py-16 md:py-24">
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              Recent Commercial Work
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              A showcase of recent commercial photography and videography projects across various industries.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {commercialProjects.map((project, index) => (
+              <motion.div
+                key={project.id}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+              >
+                <ProjectCard 
+                  project={project} 
+                  priority={index < 4}
+                  onClick={handleProjectClick}
+                />
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -224,44 +285,6 @@ export default function CommercialPage() {
                     </CardDescription>
                   </CardHeader>
                 </Card>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Portfolio Gallery */}
-      <section className="py-16 md:py-24">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Recent Commercial Work
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              A showcase of recent commercial photography projects across various industries.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {commercialProjects.map((project, index) => (
-              <motion.div
-                key={project.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-              >
-                <ProjectCard 
-                  project={project} 
-                  priority={index < 4}
-                  onClick={handleProjectClick}
-                />
               </motion.div>
             ))}
           </div>
