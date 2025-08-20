@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { CategoryFilter } from '@/components/category-filter'
-import { CustomProjectsHero } from '@/components/custom-projects-hero'
+import { PageHeroSection } from '@/components/page-hero-section'
 import { useProjects } from '@/components/projects-provider'
 import { useState, useMemo } from 'react'
 import { CustomLightbox } from '@/components/custom-lightbox'
@@ -96,10 +96,16 @@ export default function PortraitPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <CustomProjectsHero serviceKey="portrait" />
+      <PageHeroSection
+        title="Portrait Photography"
+        description="Professional portrait sessions capturing personality, style, and authentic moments with artistic composition and expert lighting."
+        pricing="Starting at $200 per session"
+        buttonText="Book Your Session"
+        filterCategories={['family-portraits', 'senior-yearbook', 'corporate-headshots', 'pet-photos', 'personal-events']}
+      />
 
       {/* Services Section */}
-      <section className="py-16 md:py-24">
+      <section className="py-12 md:py-16">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -152,9 +158,10 @@ export default function PortraitPage() {
       </section>
 
       {/* Portrait Examples with Category Filter */}
-      <section className="py-16 md:py-24">
+      <section className="py-12 md:py-16">
         <div className="container mx-auto px-4">
           <CategoryFilter
+            enablePagination={true}
             projects={portraitProjects}
             categories={filterCategories}
             onProjectClick={handleProjectClick}
@@ -165,7 +172,7 @@ export default function PortraitPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 md:py-24 bg-muted/50">
+      <section className="py-12 md:py-16 bg-muted/50">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}

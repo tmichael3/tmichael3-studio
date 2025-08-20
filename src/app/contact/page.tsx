@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Mail, Phone, MapPin, Clock } from 'lucide-react'
 import { useState } from 'react'
 import { contactInfo as contactData } from '@/data/constants'
+import { PageHeroSection } from '@/components/page-hero-section'
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -68,27 +69,15 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="py-20 bg-gradient-to-br from-background to-muted">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-center max-w-3xl mx-auto"
-          >
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              Let&apos;s Create <span className="text-primary">Something Beautiful</span>
-            </h1>
-            <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-              Ready to capture your special moments? Get in touch to discuss your photography needs 
-              and let&apos;s plan something amazing together.
-            </p>
-          </motion.div>
-        </div>
-      </section>
+      <PageHeroSection
+        title="Let's Create Something Beautiful"
+        description="Ready to capture your special moments? Get in touch to discuss your photography needs and let's plan something amazing together."
+        buttonText="Get Started"
+        filterCategories={['photography', 'video-production', 'weddings', 'real-estate', 'commercial']}
+      />
 
       {/* Contact Form & Info Section */}
-      <section className="py-20 bg-background">
+      <section className="py-16 bg-background">
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
             {/* Contact Form */}

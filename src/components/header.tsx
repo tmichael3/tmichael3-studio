@@ -37,8 +37,8 @@ export function Header() {
       label: 'Services',
       submenu: [
         { href: '/services/portrait', label: 'Portrait' },
-        { href: '/services/wedding', label: 'Wedding' },
         { href: '/services/commercial', label: 'Commercial' },
+        { href: '/services/wedding', label: 'Wedding' },
       ]
     },
     { href: '/portfolio', label: 'Portfolio' },

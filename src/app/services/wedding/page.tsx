@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { CategoryFilter } from '@/components/category-filter'
-import { CustomProjectsHero } from '@/components/custom-projects-hero'
+import { PageHeroSection } from '@/components/page-hero-section'
 import { useState, useMemo } from 'react'
 import { CustomLightbox } from '@/components/custom-lightbox'
 import { type Project } from '@/data/projects'
@@ -110,10 +110,16 @@ export default function WeddingPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <CustomProjectsHero serviceKey="wedding" />
+      <PageHeroSection
+        title="Wedding Photography & Video"
+        description="Complete wedding documentation combining stunning photography and cinematic videography to preserve your special day."
+        pricing="Packages starting at $1,500"
+        buttonText="View Packages"
+        filterCategories={['weddings', 'wedding-photo-video']}
+      />
 
       {/* Wedding Packages Section */}
-      <section className="py-16 md:py-24">
+      <section className="py-12 md:py-16">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -177,8 +183,22 @@ export default function WeddingPage() {
         </div>
       </section>
 
+      {/* Wedding Examples */}
+      <section className="py-12 md:py-16">
+        <div className="container mx-auto px-4">
+          <CategoryFilter
+            enablePagination={true}
+            projects={weddingProjects}
+            categories={filterCategories}
+            onProjectClick={handleProjectClick}
+            title="Wedding Examples"
+            description="Explore our recent wedding work across photography and videography to see our style and approach."
+          />
+        </div>
+      </section>
+
       {/* CTA Section - Moved above portfolio */}
-      <section className="py-16 md:py-24">
+      <section className="py-12 md:py-16">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -203,19 +223,6 @@ export default function WeddingPage() {
               </Button>
             </div>
           </motion.div>
-        </div>
-      </section>
-
-      {/* Portfolio Gallery with Category Filter */}
-      <section className="py-16 md:py-24">
-        <div className="container mx-auto px-4">
-          <CategoryFilter
-            projects={weddingProjects}
-            categories={filterCategories}
-            onProjectClick={handleProjectClick}
-            title="Wedding Examples"
-            description="Explore our recent wedding work across photography and videography to see our style and approach."
-          />
         </div>
       </section>
 

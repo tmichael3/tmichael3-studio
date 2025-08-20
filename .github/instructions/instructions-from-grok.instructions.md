@@ -30,15 +30,27 @@ You are an expert Next.js developer assisting with building tmichael3.studio, a 
 **Header:** (Component: `components/header.tsx`)  
 - Desktop: Logo left, nav links right, theme toggle far right.  
 - Mobile: Logo left, theme toggle + hamburger both aligned right. Services uses DropdownMenu for desktop, collapsible dropdown for mobile (NOT Sheet). Mobile nav is dropdown below header with table-row styling.
+- Navigation Order: Portrait → Commercial → Wedding (wedding moved to last position in services menu)
 
 **Theme:**  
 Persistent theme toggle using localStorage, prevents flash with `<head>` script in layout. Solid backgrounds (no transparency/backdrop-blur) for header/footer.
 
 **Styles:**  
-Define all in `tailwind.config.js` (OKLCH colors, Inter font, `darkMode: 'class'`). Use `cn` utility with tailwind-merge for classes. Mobile-first approach. Group long classes into reusable utils (e.g., in lib/utils.ts).
+Define all in `tailwind.config.js` (OKLCH colors, Inter font, `darkMode: 'class'`). Use `cn` utility with tailwind-merge for classes. Mobile-first approach. Group long classes into reusable utils (e.g., in lib/utils.ts). Consistent spacing system: py-12 md:py-16 for all sections.
 
 **Components:**  
 All components in `components/` directory. Use "use client" directive only when needed for interactivity.
+
+**Hero System:**  
+Unified hero component system using `PageHeroSection` component for all pages except home:
+- Component: `components/page-hero-section.tsx`
+- Layout: Full-width hero matching home page aesthetic with centered content
+- Height: h-[55vh] md:h-[45vh] lg:h-[55vh] (shorter than original for better proportions)
+- Content Position: Centered both horizontally and vertically (not bottom-aligned)
+- Image Filtering: Dynamic project-based backgrounds using filterCategories prop
+- Custom Images: Support for custom image arrays (used for About page personal photos)
+- Styling: Consistent overlay (bg-black/40), smooth fade transitions, home page button styling
+- Auto-rotation: 4-second intervals with 1-second fade transitions
 
 **Content:**  
 Hardcoded in `data/` files. Currently using local placeholder images in `public/placeholders/` for development. Will migrate to Cloudflare bucket URLs via Next.js Image component when ready for production. Centralize labels/descriptions to data/constants.ts (e.g., categoryLabels, sectionLabels). Convert projects.ts to JSON for easier editing; load with import projects from '@/data/projects.json' assert { type: 'json' };. Add ProjectsProvider using Context API in app/layout.tsx to share projects site-wide, reducing imports.
@@ -50,6 +62,24 @@ Hardcoded in `data/` files. Currently using local placeholder images in `public/
 
 **Portfolio:**  
 Custom lightbox "project-viewer" with enhanced features - project info display, thumbnail navigation, keyboard controls, smooth animations via framer-motion. Supports both photo galleries and video projects. Use useMemo for mediaArray. Simplify conditionals into one media flow. Add swipe gestures (react-swipeable) for mobile. Implement lazy-loading for thumbnails. Memoize groupings/filters with useMemo. Use Suspense for grids if adding async fetches later.
+
+**Page Structure & Organization:**
+- **Home Page:** Service panels hero, reduced spacing (py-12 md:py-16), "View Portfolio" button repositioned under description
+- **Services Pages:** 
+  - Portrait: Hero → Services → Packages → Examples → CTA
+  - Commercial: Hero → Commercial Services → Monthly Retainer Packages → Commercial Examples → CTA
+  - Wedding: Hero → Wedding Packages → Wedding Examples → CTA
+- **Portfolio:** Hero → Category filters → Project grid → Lightbox
+- **About:** Hero (personal images) → My Story section (IMG-20220419-WA0005.webp image) → Experience cards
+- **Contact:** Hero (mixed project images) → Contact form → Info cards
+
+**Hero Configuration by Page:**
+- Portrait: `['family-portraits', 'senior-yearbook', 'corporate-headshots', 'pet-photos', 'personal-events']`
+- Wedding: `['weddings', 'wedding-photo-video']`
+- Commercial: `['real-estate', 'commercial', 'corporate-headshots', 'branded-photoshoots', 'corporate-events', 'branded-marketing-video', 'training-videos']`
+- Portfolio: `['photography', 'video-production', 'weddings']`
+- About: Custom images from `/About_Photos/` directory
+- Contact: `['photography', 'video-production', 'weddings', 'real-estate', 'commercial']`
 
 **Constraints:**  
 No backend, forms, database, auth, or blog. Focus on responsive design, SEO metadata, performance, accessibility. Add alts everywhere, focus trapping in lightbox, ARIA for nav. Add dynamic Metadata in pages (e.g., Portfolio: title based on category).
@@ -68,9 +98,24 @@ Prioritize mobile-first Tailwind (`sm:`, `md:`), accessibility, and plan complia
 - Local placeholders ensure consistent loading and offline development capability  
 - Placeholder images are version controlled and load instantly  
 
-**Custom Lightbox Implementation:**  
-- Built custom lightbox component
+**Hero System Implementation:**  
+- Single `PageHeroSection` component replaces all previous hero variations
+- Consistent layout across all pages (except home) with centered content
+- Dynamic image filtering based on page context and project categories
+- Shorter desktop height for better visual proportions
+- Smooth fade transitions between background images without scaling effects
+
+**Section Spacing:**
+- Standardized py-12 md:py-16 spacing across all sections on all pages
+- Consistent vertical rhythm and visual hierarchy
+- Mobile-first responsive approach with proper breakpoint scaling
+
+**Navigation Improvements:**
+- Services menu reordered: Portrait → Commercial → Wedding
+- Wedding moved to last position for better user flow
+- Consistent dropdown behavior across desktop and mobile
 
 **Complete Pages:**  
-- Services Subpages: Use filtered projects (e.g., Portrait shows family/senior sections). Add descriptions, pricing, CTAs.  
-- About/Contact: Static bio; Contact with form (use Formspree for no-backend submission).  
+- Services Subpages: Use filtered projects with reorganized section order. Commercial Services moved above Monthly Retainer Packages. Wedding Packages moved above Wedding Examples for better conversion flow.
+- About/Contact: About uses personal hero images, Contact uses mixed project categories for variety.
+- All pages now use unified PageHeroSection with consistent styling and behavior.

@@ -10,9 +10,15 @@ interface ProjectCardProps {
   project: Project
   priority?: boolean
   onClick?: (project: Project) => void
+  disableAnimation?: boolean
 }
 
-const ProjectCard = React.memo(function ProjectCard({ project, priority = false, onClick }: ProjectCardProps) {
+const ProjectCard = React.memo(function ProjectCard({ 
+  project, 
+  priority = false, 
+  onClick,
+  disableAnimation = false 
+}: ProjectCardProps) {
   // Validate thumbnailUrl and provide fallback
   const thumbnailSrc = project.thumbnailUrl && project.thumbnailUrl.trim() !== '' 
     ? project.thumbnailUrl 
@@ -26,9 +32,9 @@ const ProjectCard = React.memo(function ProjectCard({ project, priority = false,
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
+      initial={disableAnimation ? false : { opacity: 0, y: 20 }}
+      animate={disableAnimation ? false : { opacity: 1, y: 0 }}
+      transition={disableAnimation ? undefined : { duration: 0.3 }}
       className="group cursor-pointer"
       onClick={handleClick}
     >
