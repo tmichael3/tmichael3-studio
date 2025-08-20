@@ -119,7 +119,7 @@ export default function WeddingPage() {
       />
 
       {/* Wedding Packages Section */}
-      <section className="py-12 md:py-16">
+      <section className="pt-12 md:pt-16 mb-12 md:mb-16">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -184,7 +184,7 @@ export default function WeddingPage() {
       </section>
 
       {/* Wedding Examples */}
-      <section className="py-12 md:py-16">
+      <section className="mb-12 md:mb-16">
         <div className="container mx-auto px-4">
           <CategoryFilter
             enablePagination={true}

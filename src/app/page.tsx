@@ -152,7 +152,7 @@ export default function Home() {
       {/* Content Container */}
       <div>
         {/* Photography & Videography Description Section */}
-        <section className="py-12 md:py-16">
+        <section className="pt-12 md:pt-16 mb-12 md:mb-16">
           <div className="container mx-auto px-4">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -184,7 +184,7 @@ export default function Home() {
         </section>
 
         {/* Recent Work Section */}
-        <section className="py-12 md:py-16">
+        <section className="mb-12 md:mb-16">
           <div className="container mx-auto px-4">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -228,7 +228,7 @@ export default function Home() {
         </section>
 
         {/* Services Overview Section */}
-        <section className="py-12 md:py-16">
+        <section className="mb-12 md:mb-16">
           <div className="container mx-auto px-4">
             <motion.div
               initial={{ opacity: 0, y: 50 }}
@@ -307,7 +307,7 @@ export default function Home() {
         </section>
 
         {/* Client Reviews Section */}
-        <section className="py-12 md:py-16">
+        <section className="mb-12 md:mb-16">
           <div className="container mx-auto px-4">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
