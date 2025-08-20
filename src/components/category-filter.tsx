@@ -3,6 +3,8 @@
 import React, { useState, useMemo, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { ChevronDown } from 'lucide-react'
 import { ProjectCard } from '@/components/project-card'
 import { ViewMoreCard } from '@/components/view-more-card'
 import { type Project } from '@/data/projects'
@@ -159,7 +161,8 @@ export const CategoryFilter = React.memo(function CategoryFilter({
 
       {/* Category Navigation */}
       <div className="flex justify-center mb-12">
-        <div className="flex flex-wrap justify-center gap-2 p-1 bg-muted rounded-lg">
+        {/* Desktop Navigation - Button Layout (XL+ screens) */}
+        <div className="hidden xl:flex flex-wrap justify-center gap-2 p-1 bg-muted rounded-lg">
           {categories.map((category) => (
             <Button
               key={category.key}
@@ -174,6 +177,29 @@ export const CategoryFilter = React.memo(function CategoryFilter({
               {category.label}
             </Button>
           ))}
+        </div>
+        
+        {/* Tablet & Mobile Navigation - Dropdown */}
+        <div className="xl:hidden w-full max-w-xs">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="w-full justify-between">
+                {categories.find(cat => cat.key === activeCategory)?.label || 'Select Category'}
+                <ChevronDown className="ml-2 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-full">
+              {categories.map((category) => (
+                <DropdownMenuItem
+                  key={category.key}
+                  onClick={() => handleCategoryChange(category.key)}
+                  className={activeCategory === category.key ? 'bg-accent' : ''}
+                >
+                  {category.label}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 
