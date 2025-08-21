@@ -7,8 +7,8 @@ import { motion } from 'framer-motion'
 import { useState, useEffect, useMemo } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { reviews, type Review } from '@/data/reviews'
-import { ProjectCard } from '@/components/project-card'
-import { CustomLightbox } from '@/components/custom-lightbox'
+import { ProjectCard } from '@/components/ProjectCard'
+import { CustomLightbox } from '@/components/CustomLightbox'
 import { projects, type Project } from '@/lib/projects'
 
 export default function Home() {

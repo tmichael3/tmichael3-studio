@@ -5,8 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { ChevronDown } from 'lucide-react'
-import { ProjectCard } from '@/components/project-card'
-import { ViewMoreCard } from '@/components/view-more-card'
+import { ProjectCard } from '@/components/ProjectCard'
+import { ViewMoreCard } from '@/components/ViewMoreCard'
 import { type Project } from '@/lib/projects'
 
 interface CategoryFilterProps {
