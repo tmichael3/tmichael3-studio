@@ -1,6 +1,7 @@
 "use client"
 
 import { motion } from 'framer-motion'
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { CategoryFilter } from '@/components/category-filter'
@@ -321,11 +322,15 @@ export default function CommercialPage() {
               Let&apos;s discuss how our commercial photography services can help your business stand out and connect with your audience.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="text-lg px-8 py-3">
-                Start Your Project
+              <Button size="lg" variant="secondary" asChild>
+                <Link href="/contact">
+                  Start Your Project
+                </Link>
               </Button>
-              <Button size="lg" variant="outline" className="text-lg px-8 py-3">
-                View Our Work
+              <Button size="lg" variant="secondary" asChild>
+                <Link href="/portfolio">
+                  View Our Work
+                </Link>
               </Button>
             </div>
           </motion.div>

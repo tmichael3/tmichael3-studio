@@ -1,6 +1,7 @@
 "use client"
 
 import { motion } from 'framer-motion'
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { CategoryFilter } from '@/components/category-filter'
@@ -118,13 +119,28 @@ export default function WeddingPage() {
         filterCategories={['weddings', 'wedding-photo-video']}
       />
 
-      {/* Wedding Packages Section */}
+      {/* Wedding Examples - Moved Above Packages */}
       <section className="pt-12 md:pt-16 mb-12 md:mb-16">
+        <div className="container mx-auto px-4">
+          <CategoryFilter
+            enablePagination={true}
+            projects={weddingProjects}
+            categories={filterCategories}
+            onProjectClick={handleProjectClick}
+            title="Wedding Examples"
+            description="Explore our recent wedding work across photography and videography to see our style and approach."
+          />
+        </div>
+      </section>
+
+      {/* Wedding Packages Section - Moved Below Examples */}
+      <section className="mb-12 md:mb-16">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
+            whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
+            viewport={{ once: true }}
             className="text-center mb-16"
           >
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
@@ -140,8 +156,9 @@ export default function WeddingPage() {
               <motion.div
                 key={pkg.title}
                 initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 + (index * 0.1) }}
+                viewport={{ once: true }}
                 className="relative"
               >
                 {pkg.popular && (
@@ -183,20 +200,6 @@ export default function WeddingPage() {
         </div>
       </section>
 
-      {/* Wedding Examples */}
-      <section className="mb-12 md:mb-16">
-        <div className="container mx-auto px-4">
-          <CategoryFilter
-            enablePagination={true}
-            projects={weddingProjects}
-            categories={filterCategories}
-            onProjectClick={handleProjectClick}
-            title="Wedding Examples"
-            description="Explore our recent wedding work across photography and videography to see our style and approach."
-          />
-        </div>
-      </section>
-
       {/* CTA Section - Moved above portfolio */}
       <section className="py-12 md:py-16 bg-primary text-primary-foreground">
         <div className="container mx-auto px-4">
@@ -214,12 +217,16 @@ export default function WeddingPage() {
               Let&apos;s create beautiful memories together. Contact us to discuss your wedding photography needs and find the perfect package for your special day.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="text-lg px-8 py-3">
-                <Heart className="w-4 h-4 mr-2" />
-                Book Consultation
+              <Button size="lg" variant="secondary" asChild>
+                <Link href="/contact">
+                  <Heart className="w-4 h-4 mr-2" />
+                  Book Consultation
+                </Link>
               </Button>
-              <Button size="lg" variant="outline" className="text-lg px-8 py-3">
-                View Full Gallery
+              <Button size="lg" variant="secondary" asChild>
+                <Link href="/portfolio">
+                  View Full Gallery
+                </Link>
               </Button>
             </div>
           </motion.div>

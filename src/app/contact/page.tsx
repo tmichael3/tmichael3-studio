@@ -20,19 +20,44 @@ export default function ContactPage() {
     eventDate: '',
     message: ''
   })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // This is a dummy form - just show an alert for now
-    alert('Thank you for your message! This is a demo form. We will get back to you soon.')
-    setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      service: '',
-      eventDate: '',
-      message: ''
-    })
+    setIsSubmitting(true)
+    
+    try {
+      // Replace 'YOUR_FORMSPREE_ID' with actual Formspree form ID
+      const response = await fetch('https://formspree.io/f/YOUR_FORMSPREE_ID', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
+      
+      if (response.ok) {
+        setSubmitStatus('success')
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          service: '',
+          eventDate: '',
+          message: ''
+        })
+      } else {
+        setSubmitStatus('error')
+      }
+    } catch {
+      setSubmitStatus('error')
+    }
+    
+    setIsSubmitting(false)
+    
+    // Reset status after 5 seconds
+    setTimeout(() => setSubmitStatus('idle'), 5000)
   }
 
   const handleInputChange = (field: string, value: string) => {
@@ -171,8 +196,21 @@ export default function ContactPage() {
                       />
                     </div>
 
-                    <Button type="submit" size="lg" className="w-full">
-                      Send Message
+                    {/* Status Messages */}
+                    {submitStatus === 'success' && (
+                      <div className="p-4 bg-green-50 border border-green-200 rounded-md text-green-800">
+                        Thank you! Your message has been sent successfully.
+                      </div>
+                    )}
+                    
+                    {submitStatus === 'error' && (
+                      <div className="p-4 bg-red-50 border border-red-200 rounded-md text-red-800">
+                        Sorry, there was an error sending your message. Please try again.
+                      </div>
+                    )}
+
+                    <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
+                      {isSubmitting ? 'Sending...' : 'Send Message'}
                     </Button>
                   </form>
                 </CardContent>

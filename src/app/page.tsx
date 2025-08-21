@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { useState, useEffect, useMemo } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { reviews, type Review } from '@/data/reviews'
@@ -57,7 +57,7 @@ export default function Home() {
       image: "/_Projects/02_Lauren_SP/Lauren+Senior-70.webp"
     },
     {
-      title: "Corporate",
+      title: "Commercial",
       description: "Discover Corporate Solutions",
       href: "/services/commercial",
       image: "/_Projects/06_Alfred_Real_Estate/234Alfred-16.webp"
@@ -67,6 +67,12 @@ export default function Home() {
       description: "Capture Your Special Day",
       href: "/services/wedding",
       image: "/_Projects/04_Unknown_Wedding/IMG_5586.webp"
+    },
+    {
+      title: "Videography",
+      description: "Cinematic Video Production",
+      href: "/services/videography",
+      image: "/placeholders/video-placeholder.svg"
     }
   ]
 
@@ -89,7 +95,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Hero Section - Three Service Panels */}
+      {/* Hero Section - Service Panels */}
       <section>
         <div className="md:container md:mx-auto md:px-4">
           <div className="h-[65vh] md:h-[55vh] lg:h-[65vh] flex flex-col md:flex-row overflow-hidden">
@@ -167,18 +173,6 @@ export default function Home() {
                 Offering professional personal, corporate, and wedding photography services tailored to your unique needs. 
                 We blend technical expertise with artistic vision to create timeless images that tell your story.
               </p>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-                className="mt-8"
-              >
-                <Button asChild size="lg" className="px-8 py-3">
-                  <Link href="/portfolio">
-                    View Full Portfolio
-                  </Link>
-                </Button>
-              </motion.div>
             </motion.div>
           </div>
         </section>
@@ -199,7 +193,7 @@ export default function Home() {
               </p>
             </motion.div>
 
-            <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
               {[
                 {
                   icon: () => (
@@ -234,6 +228,17 @@ export default function Home() {
                   description: "Business and real estate photography",
                   price: "Starting at $300",
                   href: "/services/commercial"
+                },
+                {
+                  icon: () => (
+                    <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                  ),
+                  title: "Videography",
+                  description: "Cinematic video production and films",
+                  price: "Starting at $800",
+                  href: "/services/videography"
                 }
               ].map((service, index) => (
                 <motion.div
@@ -252,7 +257,7 @@ export default function Home() {
                     <h3 className="text-xl font-semibold mb-2">{service.title}</h3>
                     <p className="text-muted-foreground mb-4">{service.description}</p>
                     <div className="text-2xl font-bold text-primary mb-4">{service.price}</div>
-                    <Button variant="outline" className="w-full" asChild>
+                    <Button className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/80 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/90" asChild>
                       <Link href={service.href}>Learn More</Link>
                     </Button>
                   </div>
@@ -302,6 +307,21 @@ export default function Home() {
                   </motion.div>
                 ))}
               </motion.div>
+
+              {/* View Portfolio Button */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                className="mt-8"
+              >
+                <Button asChild size="lg" className="px-8 py-3">
+                  <Link href="/portfolio">
+                    View Full Portfolio
+                  </Link>
+                </Button>
+              </motion.div>
             </motion.div>
           </div>
         </section>
@@ -336,47 +356,38 @@ export default function Home() {
 
                   {/* Review Content */}
                   <div className="flex-1 mx-8">
-                    <AnimatePresence mode="wait">
-                      <motion.div
-                        key={currentReview}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 1 }}
-                        className="flex flex-col items-center gap-8 md:flex-row md:gap-12"
-                      >
-                        {/* Client Photo - Top on mobile, left on desktop */}
-                        <div className="shrink-0 order-1 md:order-1">
-                          <div className="relative w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden border-4 border-border">
-                            <Image
-                              src={reviews[currentReview].image}
-                              alt={`${reviews[currentReview].name} profile photo`}
-                              fill
-                              className="object-cover"
-                              sizes="(max-width: 768px) 96px, 128px"
-                            />
-                          </div>
+                    <div className="flex flex-col items-center gap-8 md:flex-row md:gap-12">
+                      {/* Client Photo - Top on mobile, left on desktop */}
+                      <div className="shrink-0 order-1 md:order-1">
+                        <div className="relative w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden border-4 border-border">
+                          <Image
+                            src={reviews[currentReview].image}
+                            alt={`${reviews[currentReview].name} profile photo`}
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 768px) 96px, 128px"
+                          />
                         </div>
+                      </div>
 
-                        {/* Review Text - Below photo on mobile, right on desktop */}
-                        <div className="flex-1 text-center md:text-left order-2 md:order-2">
-                          {/* Review Text */}
-                          <blockquote className="text-lg md:text-xl text-foreground mb-4 leading-relaxed">
-                            &ldquo;{reviews[currentReview].text}&rdquo;
-                          </blockquote>
-                          
-                          {/* Client Name and Service */}
-                          <div className="space-y-1">
-                            <p className="font-semibold text-foreground">
-                              {reviews[currentReview].name}
-                            </p>
-                            <p className="text-sm text-muted-foreground">
-                              {reviews[currentReview].service} Photography
-                            </p>
-                          </div>
+                      {/* Review Text - Below photo on mobile, right on desktop */}
+                      <div className="flex-1 text-center md:text-left order-2 md:order-2">
+                        {/* Review Text */}
+                        <blockquote className="text-lg md:text-xl text-foreground mb-4 leading-relaxed">
+                          &ldquo;{reviews[currentReview].text}&rdquo;
+                        </blockquote>
+                        
+                        {/* Client Name and Service */}
+                        <div className="space-y-1">
+                          <p className="font-semibold text-foreground">
+                            {reviews[currentReview].name}
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            {reviews[currentReview].service} Photography
+                          </p>
                         </div>
-                      </motion.div>
-                    </AnimatePresence>
+                      </div>
+                    </div>
                   </div>
 
                   {/* Next Button */}

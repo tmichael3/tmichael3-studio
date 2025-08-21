@@ -72,7 +72,7 @@ export function PageHeroSection({
           <div className="relative flex-1 group overflow-hidden">
             {/* Animated Background Images */}
             <div className="absolute inset-0 z-0">
-              <AnimatePresence mode="wait">
+              <AnimatePresence>
                 <motion.div
                   key={currentImageIndex}
                   initial={{ opacity: 0 }}

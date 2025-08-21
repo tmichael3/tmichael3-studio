@@ -39,6 +39,7 @@ export function Header() {
         { href: '/services/portrait', label: 'Portrait' },
         { href: '/services/commercial', label: 'Commercial' },
         { href: '/services/wedding', label: 'Wedding' },
+        { href: '/services/videography', label: 'Videography' },
       ]
     },
     { href: '/portfolio', label: 'Portfolio' },

@@ -1,6 +1,7 @@
 "use client"
 
 import { motion } from 'framer-motion'
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { CategoryFilter } from '@/components/category-filter'
@@ -188,11 +189,15 @@ export default function PortraitPage() {
               Let&apos;s work together to capture the moments and memories that matter most to you and your loved ones.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="text-lg px-8 py-3">
-                Book Your Session
+              <Button size="lg" variant="secondary" asChild>
+                <Link href="/contact">
+                  Book Your Session
+                </Link>
               </Button>
-              <Button size="lg" variant="outline" className="text-lg px-8 py-3">
-                View Pricing
+              <Button size="lg" variant="secondary" asChild>
+                <Link href="/contact">
+                  View Pricing
+                </Link>
               </Button>
             </div>
           </motion.div>
