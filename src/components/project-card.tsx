@@ -2,7 +2,6 @@
 
 import React from 'react'
 import Image from 'next/image'
-import { motion } from 'framer-motion'
 import { Camera, Video, Play, Layers } from 'lucide-react'
 import { type Project } from '@/lib/projects'
 
@@ -31,11 +30,8 @@ const ProjectCard = React.memo(function ProjectCard({
   }
 
   return (
-    <motion.div
-      initial={disableAnimation ? false : { opacity: 0, y: 20 }}
-      animate={disableAnimation ? false : { opacity: 1, y: 0 }}
-      transition={disableAnimation ? undefined : { duration: 0.3 }}
-      className="group cursor-pointer"
+    <div
+      className={`group cursor-pointer transition-smooth ${disableAnimation ? '' : 'animate-fade-in'}`}
       onClick={handleClick}
     >
       <div className="relative aspect-square overflow-hidden rounded-lg bg-muted">
@@ -77,7 +73,7 @@ const ProjectCard = React.memo(function ProjectCard({
           {project.description}
         </p>
       </div>
-    </motion.div>
+    </div>
   )
 })
 

@@ -1,353 +1,169 @@
-"use client"
-
-import React, { useState, useEffect, useMemo } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { projects, type Project } from '@/lib/projects'
-import { CustomLightbox } from '@/components/custom-lightbox'
+import { projects } from '@/lib/projects'
 import { ProjectCard } from '@/components/project-card'
-import { ViewMoreCard } from '@/components/view-more-card'
-import { PageHeroSection } from '@/components/page-hero-section'
+import Link from 'next/link'
+import { Camera, Video, Heart } from 'lucide-react'
 
-type CategoryType = 'all' | 'photography' | 'video-production' | 'weddings'
-
-export default function Portfolio() {
-  const [lightboxOpen, setLightboxOpen] = useState(false)
-  const [currentProject, setCurrentProject] = useState<Project | null>(null)
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
-  const [activeCategory, setActiveCategory] = useState<CategoryType>('all')
-  const [visibleItemsPerSection, setVisibleItemsPerSection] = useState<Record<string, number>>({})
-  const [isDesktop, setIsDesktop] = useState(false)
-
-  // Detect screen size on mount and resize
-  useEffect(() => {
-    const checkScreenSize = () => {
-      setIsDesktop(window.innerWidth >= 1280)
+export default function PortfolioPage() {
+  // Group projects by category (server-side)
+  const portfolioSections = [
+    {
+      title: 'Wedding Photography',
+      description: 'Beautiful moments from recent wedding celebrations',
+      icon: Heart,
+      projects: projects.filter(p => p.category === 'weddings' || p.section === 'wedding-photo-video').slice(0, 6)
+    },
+    {
+      title: 'Portrait Sessions',
+      description: 'Professional portraits and family sessions',
+      icon: Camera,
+      projects: projects.filter(p => ['family-portraits', 'senior-yearbook', 'corporate-headshots'].includes(p.section)).slice(0, 6)
+    },
+    {
+      title: 'Commercial Work',
+      description: 'Professional business and real estate photography',
+      icon: Camera,
+      projects: projects.filter(p => ['real-estate', 'corporate'].includes(p.section)).slice(0, 6)
+    },
+    {
+      title: 'Videography',
+      description: 'Cinematic films and video content',
+      icon: Video,
+      projects: projects.filter(p => p.mediaType === 'video' || p.mediaType === 'hybrid').slice(0, 6)
     }
-    
-    checkScreenSize()
-    window.addEventListener('resize', checkScreenSize)
-    return () => window.removeEventListener('resize', checkScreenSize)
-  }, [])
-
-  // Responsive pagination logic based on rows
-  const getPaginationConfig = () => {
-    return {
-      desktop: {
-        columns: 4,
-        initialRows: 2,
-        loadMoreRows: 1
-      },
-      mobile: {
-        columns: 2, 
-        initialRows: 3,
-        loadMoreRows: 1
-      }
-    }
-  }
-
-  const getInitialItemsCount = () => {
-    const config = getPaginationConfig()
-    // Desktop: 2 rows × 4 cols = 8 (7 projects + 1 "View More")
-    // Mobile: 3 rows × 2 cols = 6 (5 projects + 1 "View More")
-    if (isDesktop) {
-      return config.desktop.columns * config.desktop.initialRows
-    } else {
-      return config.mobile.columns * config.mobile.initialRows
-    }
-  }
-
-  const getLoadMoreCount = () => {
-    const config = getPaginationConfig()
-    // Desktop: 1 row × 4 cols = 4 more projects
-    // Mobile: 1 row × 2 cols = 2 more projects
-    if (isDesktop) {
-      return config.desktop.columns * config.desktop.loadMoreRows
-    } else {
-      return config.mobile.columns * config.mobile.loadMoreRows
-    }
-  }
-
-  // Group projects by category
-  const projectsByCategory = useMemo(() => ({
-    'all': projects,
-    'photography': projects.filter(p => p.category === 'photography'),
-    'video-production': projects.filter(p => p.category === 'video-production'),
-    'weddings': projects.filter(p => p.category === 'weddings')
-  }), [])
-
-  // Group projects by section within categories
-  const groupProjectsBySections = (categoryProjects: Project[]) => {
-    const grouped = categoryProjects.reduce((acc, project) => {
-      if (!acc[project.section]) {
-        acc[project.section] = []
-      }
-      acc[project.section].push(project)
-      return acc
-    }, {} as Record<string, Project[]>)
-    return grouped
-  }
-
-  const categoryLabels = {
-    'all': 'All Work',
-    'photography': 'Photography',
-    'video-production': 'Video Production',
-    'weddings': 'Weddings'
-  }
-
-  const categoryDescriptions = {
-    'all': 'Explore our complete portfolio showcasing photography and videography work across all categories and project types.',
-    'photography': 'Professional photography services capturing life\'s most precious moments with artistic vision and technical excellence.',
-    'video-production': 'Dynamic video production solutions for brands, businesses, and personal projects with cinematic storytelling.',
-    'weddings': 'Complete wedding documentation combining photography and videography to preserve your most important day.'
-  }
-
-  const sectionLabels = {
-    'family-portraits': 'Family Portraits',
-    'senior-photos': 'Senior Photos',
-    'senior-yearbook': 'Senior/Yearbook Photos',
-    'corporate-headshots': 'Corporate Headshots',
-    'branded-photoshoots': 'Branded Photoshoots',
-    'pet-photos': 'Pet Photos',
-    'branded-marketing-video': 'Branded Marketing Video',
-    'training-videos': 'Training Videos',
-    'podcasts': 'Podcasts',
-    'corporate-events': 'Corporate Events',
-    'personal-events': 'Personal Events',
-    'portraits': 'Portrait Sessions',
-    'wedding-photo-video': 'Wedding Photo & Video',
-    'wedding-photo': 'Wedding Photography',
-    'wedding-video': 'Wedding Videography',
-    'real-estate': 'Real Estate',
-    'business': 'Business Photography',
-    'photography': 'Photography Work',
-    'video-production': 'Video Production',
-    'weddings': 'Wedding Work',
-    'commercial': 'Commercial'
-  }
-  
-  const handleProjectClick = (project: Project) => {
-    setCurrentProject(project)
-    setCurrentImageIndex(0)
-    setLightboxOpen(true)
-  }
-
-  const handleLoadMore = (sectionKey: string) => {
-    const currentVisible = visibleItemsPerSection[sectionKey] || getInitialItemsCount()
-    const loadMoreCount = getLoadMoreCount()
-    setVisibleItemsPerSection(prev => ({
-      ...prev,
-      [sectionKey]: currentVisible + loadMoreCount
-    }))
-  }
-
-  const currentProjects = useMemo(() => projectsByCategory[activeCategory], [projectsByCategory, activeCategory])
-  
-  const groupedProjects = useMemo(() => {
-    if (activeCategory === 'all') {
-      // For "all" category, group by project category (photography, video-production, weddings)
-      const allGrouped: Record<string, Project[]> = {}
-      currentProjects.forEach(project => {
-        if (!allGrouped[project.category]) {
-          allGrouped[project.category] = []
-        }
-        allGrouped[project.category].push(project)
-      })
-      return allGrouped
-    } else if (activeCategory === 'weddings') {
-      // For weddings, split into photo and video columns
-      const photoProjects = currentProjects.filter(p => p.mediaType === 'photo')
-      const videoProjects = currentProjects.filter(p => p.mediaType === 'video')
-      return {
-        'wedding-photo': photoProjects,
-        'wedding-video': videoProjects
-      }
-    } else {
-      return groupProjectsBySections(currentProjects)
-    }
-  }, [activeCategory, currentProjects])
+  ]
 
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <PageHeroSection
-        title="Portfolio"
-        description="Explore our complete collection of photography and videography work across all specialties."
-        pricing="View our full range of services"
-        buttonText="Contact Us"
-        filterCategories={['photography', 'video-production', 'weddings']}
-      />
+      <section className="py-20 bg-gradient-to-br from-primary/10 via-background to-primary/5">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto text-center animate-fade-in-up">
+            <h1 className="text-4xl md:text-5xl font-bold mb-6">
+              Portfolio
+            </h1>
+            <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
+              A showcase of recent work spanning weddings, portraits, commercial photography, and videography. 
+              Each project tells a unique story through professional artistry and technical excellence.
+            </p>
+          </div>
+        </div>
+      </section>
 
-      {/* Navigation and Portfolio Content */}
-      <div className="container mx-auto px-4 pt-12 md:pt-16 mb-12 md:mb-16">
-        {/* Category Title and Description */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12"
-        >
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            {categoryLabels[activeCategory]}
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed mb-8">
-            {categoryDescriptions[activeCategory]}
-          </p>
+      {/* Portfolio Sections */}
+      {portfolioSections.map((section, sectionIndex) => (
+        <section key={section.title} className={`py-20 ${sectionIndex % 2 === 1 ? 'bg-muted/50' : ''}`}>
+          <div className="container mx-auto px-4">
+            {/* Section Header */}
+            <div className="text-center mb-12 animate-fade-in-up">
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <section.icon className="h-8 w-8 text-primary" />
+                <h2 className="text-3xl md:text-4xl font-bold">{section.title}</h2>
+              </div>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                {section.description}
+              </p>
+            </div>
 
-          {/* Category Navigation */}
-          <div className="flex justify-center">
-            <div className="flex flex-wrap justify-center gap-2 p-1 bg-muted rounded-lg">
-              {Object.entries(categoryLabels).map(([key, label]) => (
-                <Button
-                  key={key}
-                  variant={activeCategory === key ? "default" : "ghost"}
-                  onClick={() => setActiveCategory(key as CategoryType)}
-                  className={`px-6 py-2 rounded-md transition-all duration-200 ${
-                    activeCategory === key 
-                      ? 'bg-primary text-primary-foreground shadow-sm' 
-                      : 'hover:bg-background'
-                  }`}
-                >
-                  {label}
-                </Button>
-              ))}
+            {/* Projects Grid */}
+            {section.projects.length > 0 ? (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {section.projects.map((project, index) => (
+                    <div 
+                      key={project.id}
+                      className={`animate-fade-in animate-delay-${Math.min((index + 1) * 100, 500)}`}
+                    >
+                      <ProjectCard 
+                        project={project} 
+                        priority={sectionIndex === 0 && index < 3}
+                        disableAnimation={true}
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                {/* View More Button */}
+                <div className="text-center mt-8 animate-fade-in-up animate-delay-400">
+                  <Button variant="outline" size="lg" asChild>
+                    <Link href={`/services/${section.title.toLowerCase().split(' ')[0]}`}>
+                      View More {section.title}
+                    </Link>
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <div className="text-center py-12">
+                <Card className="max-w-md mx-auto">
+                  <CardContent className="p-8">
+                    <section.icon className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold mb-2">Coming Soon</h3>
+                    <p className="text-muted-foreground">
+                      New {section.title.toLowerCase()} projects will be added here soon.
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+          </div>
+        </section>
+      ))}
+
+      {/* All Projects Section */}
+      <section className="py-20">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12 animate-fade-in-up">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Recent Work
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              A mix of recent projects showcasing the full range of our photography and videography services.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {projects.slice(0, 12).map((project, index) => (
+              <div 
+                key={project.id}
+                className={`animate-fade-in animate-delay-${Math.min((index + 1) * 50, 500)}`}
+              >
+                <ProjectCard 
+                  project={project} 
+                  priority={index < 4}
+                  disableAnimation={true}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Call to Action */}
+      <section className="py-20 bg-primary text-primary-foreground">
+        <div className="container mx-auto px-4 text-center">
+          <div className="max-w-2xl mx-auto animate-fade-in-up">
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">
+              Ready to Create Your Own Story?
+            </h2>
+            <p className="text-lg mb-8 opacity-90">
+              Let&apos;s work together to capture your special moments with the same care and artistry you see here.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button size="lg" variant="secondary" asChild>
+                <Link href="/contact">
+                  Start Your Project
+                </Link>
+              </Button>
+              <Button size="lg" variant="outline" asChild>
+                <Link href="/about">
+                  Learn More About Me
+                </Link>
+              </Button>
             </div>
           </div>
-        </motion.div>
-
-        {/* Portfolio Content */}
-        <div className="overflow-hidden">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeCategory}
-              initial={{ x: 300, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: -300, opacity: 0 }}
-              transition={{ 
-                type: "spring",
-                stiffness: 300,
-                damping: 30,
-                duration: 0.3
-              }}
-            >
-
-              {/* Sections */}
-              {activeCategory === 'weddings' ? (
-                // Special two-column layout for weddings
-                <div className="grid md:grid-cols-2 gap-12">
-                  {Object.entries(groupedProjects).map(([sectionKey, sectionProjects], sectionIndex) => (
-                    <motion.div
-                      key={sectionKey}
-                      initial={{ opacity: 0, x: sectionIndex === 0 ? -30 : 30 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.2 + (sectionIndex * 0.1) }}
-                    >
-                      <div className="mb-8">
-                        <h3 className="text-2xl md:text-3xl font-semibold text-foreground mb-2">
-                          {sectionLabels[sectionKey as keyof typeof sectionLabels]}
-                        </h3>
-                      </div>
-                      
-                      {/* Render projects with pagination */}
-                      {renderSectionWithPagination(sectionKey, sectionProjects)}
-                    </motion.div>
-                  ))}
-                </div>
-              ) : (
-                // Standard layout for other categories
-                <div className="space-y-16">
-                  {Object.entries(groupedProjects).map(([sectionKey, sectionProjects], sectionIndex) => (
-                    <motion.div
-                      key={sectionKey}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.2 + (sectionIndex * 0.1) }}
-                    >
-                      <div className="mb-8">
-                        <h3 className="text-2xl md:text-3xl font-semibold text-foreground mb-2">
-                          {sectionLabels[sectionKey as keyof typeof sectionLabels]}
-                        </h3>
-                      </div>
-
-                      {/* Render projects with pagination */}
-                      {renderSectionWithPagination(sectionKey, sectionProjects)}
-                    </motion.div>
-                  ))}
-                </div>
-              )}
-            </motion.div>
-          </AnimatePresence>
         </div>
-      </div>
-
-      {/* Custom Lightbox */}
-      <CustomLightbox
-        isOpen={lightboxOpen}
-        onClose={() => setLightboxOpen(false)}
-        project={currentProject}
-        initialIndex={currentImageIndex}
-      />
+      </section>
     </div>
   )
-
-  // Helper function to render section with pagination
-  function renderSectionWithPagination(sectionKey: string, sectionProjects: Project[]) {
-    const currentVisible = visibleItemsPerSection[sectionKey] || getInitialItemsCount()
-    const visibleProjects = sectionProjects.slice(0, currentVisible - 1) // -1 for "View More" card
-    const hasMoreItems = sectionProjects.length > currentVisible - 1
-    
-    const gridClass = activeCategory === 'weddings' 
-      ? "grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6"
-      : "grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6"
-
-    return (
-      <div className={gridClass}>
-        {visibleProjects.map((project, index) => {
-          // Only animate the first few cards and newly loaded cards
-          const isInitialLoad = index < getInitialItemsCount() - 1
-          const shouldAnimate = isInitialLoad || index >= (currentVisible - getLoadMoreCount() - 1)
-          
-          return shouldAnimate ? (
-            <motion.div
-              key={project.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ 
-                duration: 0.2,
-                delay: isInitialLoad ? index * 0.02 : (index - (currentVisible - getLoadMoreCount() - 1)) * 0.03
-              }}
-            >
-              <ProjectCard 
-                project={project} 
-                priority={index < 4}
-                onClick={handleProjectClick}
-                disableAnimation={true}
-              />
-            </motion.div>
-          ) : (
-            <div key={project.id}>
-              <ProjectCard 
-                project={project} 
-                priority={index < 4}
-                onClick={handleProjectClick}
-                disableAnimation={true}
-              />
-            </div>
-          )
-        })}
-        
-        {/* Show View More card if there are more items */}
-        {hasMoreItems && (
-          <motion.div
-            key={`${sectionKey}-view-more`}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2, delay: 0.05 }}
-          >
-            <ViewMoreCard onClick={() => handleLoadMore(sectionKey)} />
-          </motion.div>
-        )}
-      </div>
-    )
-  }
 }
