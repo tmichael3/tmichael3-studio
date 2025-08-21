@@ -76,7 +76,7 @@ export default function AboutPage() {
       />
 
       {/* About Story Section */}
-      <section className="py-16 bg-muted/50">
+      <section className="py-16">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             <motion.div
@@ -103,6 +103,7 @@ export default function AboutPage() {
                         alt="TJ Michael portrait"
                         fill
                         className="object-cover"
+                        sizes="(max-width: 768px) 100vw, 50vw"
                       />
                     </div>
                   </div>

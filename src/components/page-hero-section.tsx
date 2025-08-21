@@ -68,7 +68,7 @@ export function PageHeroSection({
   return (
     <section>
       <div className="md:container md:mx-auto md:px-4">
-        <div className="h-[55vh] md:h-[45vh] lg:h-[55vh] flex overflow-hidden">
+        <div className="h-[55vh] md:h-[55vh] lg:h-[55vh] flex overflow-hidden">
           <div className="relative flex-1 group overflow-hidden">
             {/* Animated Background Images */}
             <div className="absolute inset-0 z-0">

@@ -69,7 +69,7 @@ const ProjectCard = React.memo(function ProjectCard({
       </div>
 
       {/* Project info */}
-      <div className="mt-3">
+      <div className="mt-3 text-center">
         <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">
           {project.title}
         </h3>

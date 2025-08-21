@@ -198,7 +198,7 @@ export default function WeddingPage() {
       </section>
 
       {/* CTA Section - Moved above portfolio */}
-      <section className="py-12 md:py-16">
+      <section className="py-12 md:py-16 bg-primary text-primary-foreground">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -207,10 +207,10 @@ export default function WeddingPage() {
             transition={{ duration: 0.6 }}
             className="text-center max-w-3xl mx-auto"
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">
               Ready to Book Your Wedding?
             </h2>
-            <p className="text-lg text-muted-foreground mb-8">
+            <p className="text-lg mb-8 opacity-90">
               Let&apos;s create beautiful memories together. Contact us to discuss your wedding photography needs and find the perfect package for your special day.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

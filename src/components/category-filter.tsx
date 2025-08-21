@@ -38,6 +38,7 @@ export const CategoryFilter = React.memo(function CategoryFilter({
   const [activeCategory, setActiveCategory] = useState(categories[0]?.key || 'all')
   const [visibleItemsPerCategory, setVisibleItemsPerCategory] = useState<Record<string, number>>({})
   const [screenSize, setScreenSize] = useState<'mobile' | 'lg' | 'xl'>('lg')
+  const [previousLoadCount, setPreviousLoadCount] = useState<Record<string, number>>({})
 
   // Detect screen size for responsive pagination
   useEffect(() => {
@@ -113,6 +114,11 @@ export const CategoryFilter = React.memo(function CategoryFilter({
   // Handle category change
   const handleCategoryChange = (categoryKey: string) => {
     setActiveCategory(categoryKey)
+    // Reset previous count for new category
+    setPreviousLoadCount(prev => ({
+      ...prev,
+      [categoryKey]: 0
+    }))
     // Initialize pagination for new category if pagination is enabled and not already set
     if (enablePagination && getItemsPerPage && !visibleItemsPerCategory[categoryKey]) {
       setVisibleItemsPerCategory(prev => ({
@@ -136,9 +142,20 @@ export const CategoryFilter = React.memo(function CategoryFilter({
   const handleLoadMore = () => {
     if (!enablePagination || !getItemsPerPage) return
     
+    // Track previous count for animation optimization
+    const currentCount = visibleItemsPerCategory[activeCategory] || getItemsPerPage
+    setPreviousLoadCount(prev => ({
+      ...prev,
+      [activeCategory]: currentCount
+    }))
+    
+    // Add exactly one full row of cards (ViewMore will replace the last card in the new row)
+    const cardsPerRow = screenSize === 'xl' ? 4 : screenSize === 'lg' ? 3 : 2
+    const cardsToAdd = cardsPerRow // Add full row, ViewMore replaces last position
+    
     setVisibleItemsPerCategory(prev => ({
       ...prev,
-      [activeCategory]: (prev[activeCategory] || getItemsPerPage) + getItemsPerPage
+      [activeCategory]: currentCount + cardsToAdd
     }))
   }
 
@@ -233,20 +250,27 @@ export const CategoryFilter = React.memo(function CategoryFilter({
             {/* Projects Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
               {/* Display the main projects */}
-              {gridProjects.map((project, index) => (
-                <motion.div
-                  key={`${activeCategory}-${project.id}`}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.3 + (index * 0.05) }}
-                >
-                  <ProjectCard
-                    project={project}
-                    priority={index < 4}
-                    onClick={onProjectClick}
-                  />
-                </motion.div>
-              ))}
+              {gridProjects.map((project, index) => {
+                // Only animate newly loaded cards
+                const prevCount = previousLoadCount[activeCategory] || 0
+                const isNewCard = index >= prevCount
+                
+                return (
+                  <motion.div
+                    key={`${activeCategory}-${project.id}`}
+                    initial={isNewCard ? { opacity: 0, x: 20 } : false}
+                    animate={isNewCard ? { opacity: 1, x: 0 } : false}
+                    transition={isNewCard ? { delay: (index - prevCount) * 0.05 } : undefined}
+                  >
+                    <ProjectCard
+                      project={project}
+                      priority={index < 4}
+                      onClick={onProjectClick}
+                      disableAnimation={!isNewCard}
+                    />
+                  </motion.div>
+                )
+              })}
 
               {/* Show View More card if there are more items */}
               {hasMoreItems && (
@@ -254,7 +278,7 @@ export const CategoryFilter = React.memo(function CategoryFilter({
                   key={`${activeCategory}-view-more`}
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.3 + (gridProjects.length * 0.05) }}
+                  transition={{ delay: 0.1 }}
                 >
                   <ViewMoreCard onClick={handleLoadMore} />
                 </motion.div>

@@ -83,9 +83,8 @@ export default function ContactPage() {
             {/* Contact Form */}
             <motion.div
               initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
             >
               <Card>
                 <CardHeader>
@@ -183,9 +182,8 @@ export default function ContactPage() {
             {/* Contact Information */}
             <motion.div
               initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
               className="space-y-8"
             >
               <div>
@@ -202,9 +200,8 @@ export default function ContactPage() {
                   <motion.div
                     key={info.title}
                     initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: index * 0.1 }}
-                    viewport={{ once: true }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.4 + index * 0.1 }}
                     className="flex items-start space-x-4 p-4 rounded-lg bg-muted/50"
                   >
                     <div className="p-2 bg-primary/10 rounded-full flex-shrink-0">
