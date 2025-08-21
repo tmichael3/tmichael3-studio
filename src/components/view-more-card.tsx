@@ -1,37 +1,26 @@
-"use client"
-
 import React from 'react'
-import { motion } from 'framer-motion'
 import { Plus } from 'lucide-react'
 
 interface ViewMoreCardProps {
-  onClick: () => void
   className?: string
 }
 
 export const ViewMoreCard = React.memo(function ViewMoreCard({
-  onClick,
   className = ""
 }: ViewMoreCardProps) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className={`group cursor-pointer ${className}`}
-      onClick={onClick}
+    <div
+      className={`group animate-fade-in-up ${className}`}
     >
       {/* Image container matching ProjectCard dimensions */}
       <div className="relative aspect-square overflow-hidden rounded-lg bg-muted">
         <div className="absolute inset-0 border-2 border-dashed border-muted-foreground/30 rounded-lg group-hover:border-primary/50 transition-colors duration-300">
           <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground group-hover:text-primary transition-colors duration-300">
-            <motion.div
-              initial={{ scale: 1 }}
-              whileHover={{ scale: 1.1 }}
-              className="mb-3"
+            <div
+              className="mb-3 transition-transform duration-200 group-hover:scale-110"
             >
               <Plus size={48} strokeWidth={1.5} />
-            </motion.div>
+            </div>
             <div className="text-center px-4">
               <p className="text-lg font-semibold mb-1">View More</p>
               <p className="text-sm opacity-70">Load more projects</p>
@@ -52,6 +41,6 @@ export const ViewMoreCard = React.memo(function ViewMoreCard({
           Click to view additional projects in this category
         </p>
       </div>
-    </motion.div>
+    </div>
   )
 })

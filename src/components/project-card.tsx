@@ -1,42 +1,31 @@
-"use client"
-
 import React from 'react'
 import Image from 'next/image'
-import { motion } from 'framer-motion'
 import { Camera, Video, Play, Layers } from 'lucide-react'
 import { type Project } from '@/lib/projects'
 
 interface ProjectCardProps {
   project: Project
   priority?: boolean
-  onClick?: (project: Project) => void
   disableAnimation?: boolean
+  className?: string
 }
 
 const ProjectCard = React.memo(function ProjectCard({ 
   project, 
   priority = false, 
-  onClick,
-  disableAnimation = false 
+  disableAnimation = false,
+  className = ""
 }: ProjectCardProps) {
   // Validate thumbnailUrl and provide fallback
   const thumbnailSrc = project.thumbnailUrl && project.thumbnailUrl.trim() !== '' 
     ? project.thumbnailUrl 
     : '/placeholders/photo-placeholder.svg'
 
-  const handleClick = () => {
-    if (onClick) {
-      onClick(project)
-    }
-  }
-
   return (
-    <motion.div
-      initial={disableAnimation ? false : { opacity: 0, y: 20 }}
-      animate={disableAnimation ? false : { opacity: 1, y: 0 }}
-      transition={disableAnimation ? undefined : { duration: 0.3 }}
-      className="group cursor-pointer"
-      onClick={handleClick}
+    <div
+      className={`group ${
+        disableAnimation ? '' : 'animate-fade-in-up'
+      } ${className}`}
     >
       <div className="relative aspect-square overflow-hidden rounded-lg bg-muted">
         <Image
@@ -77,7 +66,7 @@ const ProjectCard = React.memo(function ProjectCard({
           {project.description}
         </p>
       </div>
-    </motion.div>
+    </div>
   )
 })
 
