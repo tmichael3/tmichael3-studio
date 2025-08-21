@@ -6,10 +6,9 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { CategoryFilter } from '@/components/category-filter'
 import { PageHeroSection } from '@/components/page-hero-section'
-import { useProjects } from '@/components/projects-provider'
+import { projects, type Project } from '@/lib/projects'
 import { useState, useMemo } from 'react'
 import { CustomLightbox } from '@/components/custom-lightbox'
-import { type Project } from '@/data/projects'
 import { commercialFilterCategories } from '@/data/constants'
 import { Building2, Camera, Palette, Zap, Clock, Users } from 'lucide-react'
 
@@ -17,8 +16,6 @@ export default function CommercialPage() {
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [currentProject, setCurrentProject] = useState<Project | null>(null)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
-
-  const { projects } = useProjects()
 
   // Get commercial-related projects using memoization - include both photography and video production
   const commercialProjects = useMemo(() => {
@@ -28,7 +25,7 @@ export default function CommercialPage() {
       (project.category === 'video-production' && 
        ['branded-marketing-video', 'training-videos', 'corporate-events'].includes(project.section))
     )
-  }, [projects])
+  }, [])
 
   // Define filter categories for commercial projects
   const filterCategories = useMemo(() => [

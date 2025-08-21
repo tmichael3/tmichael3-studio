@@ -4,7 +4,7 @@ import React from 'react'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { Camera, Video, Play, Layers } from 'lucide-react'
-import { type Project } from '@/data/projects'
+import { type Project } from '@/lib/projects'
 
 interface ProjectCardProps {
   project: Project

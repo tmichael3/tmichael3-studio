@@ -9,8 +9,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { reviews, type Review } from '@/data/reviews'
 import { ProjectCard } from '@/components/project-card'
 import { CustomLightbox } from '@/components/custom-lightbox'
-import { useProjects } from '@/components/projects-provider'
-import { type Project } from '@/data/projects'
+import { projects, type Project } from '@/lib/projects'
 
 export default function Home() {
   const [hoveredButton, setHoveredButton] = useState<number | null>(null)
@@ -18,7 +17,6 @@ export default function Home() {
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [currentProject, setCurrentProject] = useState<Project | null>(null)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
-  const { projects } = useProjects()
 
   // Get 8 recent projects for Recent Work section (deterministic)
   const recentProjects = useMemo(() => {
@@ -41,7 +39,7 @@ export default function Home() {
     }
     
     return selected
-  }, [projects])
+  }, [])
 
   const handleProjectClick = (project: Project) => {
     setCurrentProject(project)

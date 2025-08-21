@@ -1,4 +1,5 @@
-import projectsData from './projects.json'
+// Direct data access - no providers needed for static data
+import projectsData from '@/data/projects.json'
 
 export interface Project {
   id: number
@@ -14,3 +15,19 @@ export interface Project {
 }
 
 export const projects: Project[] = projectsData as Project[]
+
+export function getProjects(): Project[] {
+  return projects
+}
+
+export function getProjectsByCategory(category: Project['category']): Project[] {
+  return projects.filter(project => project.category === category)
+}
+
+export function getProjectsBySection(section: Project['section']): Project[] {
+  return projects.filter(project => project.section === section)
+}
+
+export function getProjectById(id: number): Project | undefined {
+  return projects.find(project => project.id === id)
+}

@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, ChevronLeft, ChevronRight, Play } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { type Project } from '@/data/projects'
+import { type Project } from '@/lib/projects'
 
 interface CustomLightboxProps {
   isOpen: boolean

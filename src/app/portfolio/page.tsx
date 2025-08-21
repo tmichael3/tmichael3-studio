@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
-import { projects, type Project } from '@/data/projects'
+import { projects, type Project } from '@/lib/projects'
 import { CustomLightbox } from '@/components/custom-lightbox'
 import { ProjectCard } from '@/components/project-card'
 import { ViewMoreCard } from '@/components/view-more-card'

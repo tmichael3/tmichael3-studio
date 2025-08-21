@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
-import { useProjects } from '@/components/projects-provider'
+import { projects } from '@/lib/projects'
 import { useState, useEffect, useMemo } from 'react'
 import { siteSettings } from '@/data/site-settings'
 
@@ -23,7 +23,6 @@ export function PageHeroSection({
   filterCategories = [], 
   customImages 
 }: PageHeroSectionProps) {
-  const { projects } = useProjects()
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
 
   // Get background images from projects or use custom images
@@ -50,7 +49,7 @@ export function PageHeroSection({
     
     // If no real images, fall back to a default placeholder
     return images.length > 0 ? images : ['/placeholders/photo-placeholder.svg']
-  }, [projects, filterCategories, customImages])
+  }, [filterCategories, customImages])
 
   // Auto-rotate background images
   useEffect(() => {

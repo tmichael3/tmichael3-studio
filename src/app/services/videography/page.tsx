@@ -6,10 +6,9 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { CategoryFilter } from '@/components/category-filter'
 import { PageHeroSection } from '@/components/page-hero-section'
-import { useProjects } from '@/components/projects-provider'
+import { projects, type Project } from '@/lib/projects'
 import { useState, useMemo } from 'react'
 import { CustomLightbox } from '@/components/custom-lightbox'
-import { type Project } from '@/data/projects'
 import { Video, Play, Camera } from 'lucide-react'
 
 export default function VideographyPage() {
@@ -17,13 +16,11 @@ export default function VideographyPage() {
   const [currentProject, setCurrentProject] = useState<Project | null>(null)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
 
-  const { projects } = useProjects()
-
   // Filter projects for videography only
   const videographyProjects = useMemo(() => 
-    projects.filter(project => 
+    projects.filter((project: Project) => 
       project.mediaType === 'video' || project.mediaType === 'hybrid'
-    ), [projects]
+    ), []
   )
 
   // Define filter categories for videography projects

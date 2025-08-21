@@ -7,7 +7,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { ChevronDown } from 'lucide-react'
 import { ProjectCard } from '@/components/project-card'
 import { ViewMoreCard } from '@/components/view-more-card'
-import { type Project } from '@/data/projects'
+import { type Project } from '@/lib/projects'
 
 interface CategoryFilterProps {
   projects: Project[]
