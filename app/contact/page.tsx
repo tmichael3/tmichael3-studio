@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Mail, Phone, MapPin, Clock } from 'lucide-react'
 import { useState } from 'react'
 import { contactInfo as contactData } from '@/data/constants'
-import { PageHeroSection } from '@/components/page-hero-section'
+import { PageHeroSection } from '@/components/PageHeroSection'
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
