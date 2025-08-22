@@ -6,7 +6,9 @@ import { Button } from '@/components/ui/button'
 import { projects, type Project } from '@/lib/projects'
 import { CustomLightbox } from '@/components/CustomLightbox'
 import { ProjectCard } from '@/components/ProjectCard'
+import { ProjectCardClientWrapper } from '@/components/ProjectCardClientWrapper'
 import { ViewMoreCard } from '@/components/ViewMoreCard'
+import { ViewMoreCardClientWrapper } from '@/components/ViewMoreCardClientWrapper'
 import { PageHeroSection } from '@/components/PageHeroSection'
 
 type CategoryType = 'all' | 'photography' | 'video-production' | 'weddings'
@@ -317,21 +319,29 @@ export default function Portfolio() {
                 delay: isInitialLoad ? index * 0.02 : (index - (currentVisible - getLoadMoreCount() - 1)) * 0.03
               }}
             >
-              <ProjectCard 
+              <ProjectCardClientWrapper 
                 project={project} 
-                priority={index < 4}
                 onClick={handleProjectClick}
-                disableAnimation={true}
-              />
+              >
+                <ProjectCard 
+                  project={project} 
+                  priority={index < 4}
+                  disableAnimation={true}
+                />
+              </ProjectCardClientWrapper>
             </motion.div>
           ) : (
             <div key={project.id}>
-              <ProjectCard 
+              <ProjectCardClientWrapper 
                 project={project} 
-                priority={index < 4}
                 onClick={handleProjectClick}
-                disableAnimation={true}
-              />
+              >
+                <ProjectCard 
+                  project={project} 
+                  priority={index < 4}
+                  disableAnimation={true}
+                />
+              </ProjectCardClientWrapper>
             </div>
           )
         })}
@@ -344,7 +354,9 @@ export default function Portfolio() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.2, delay: 0.05 }}
           >
-            <ViewMoreCard onClick={() => handleLoadMore(sectionKey)} />
+            <ViewMoreCardClientWrapper onClick={() => handleLoadMore(sectionKey)}>
+              <ViewMoreCard />
+            </ViewMoreCardClientWrapper>
           </motion.div>
         )}
       </div>

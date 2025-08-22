@@ -8,6 +8,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { reviews, type Review } from '@/data/reviews'
 import { ProjectCard } from '@/components/ProjectCard'
+import { ProjectCardClientWrapper } from '@/components/ProjectCardClientWrapper'
 import { CustomLightbox } from '@/components/CustomLightbox'
 import { projects, type Project } from '@/lib/projects'
 
@@ -298,10 +299,12 @@ export default function Home() {
                     viewport={{ once: true }}
                     transition={{ duration: 0.6, delay: index * 0.1 }}
                   >
-                    <ProjectCard 
+                    <ProjectCardClientWrapper 
                       project={project} 
                       onClick={() => handleProjectClick(project)}
-                    />
+                    >
+                      <ProjectCard project={project} />
+                    </ProjectCardClientWrapper>
                   </motion.div>
                 ))}
               </motion.div>

@@ -7,6 +7,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { ChevronDown } from 'lucide-react'
 import { ProjectCard } from '@/components/ProjectCard'
 import { ViewMoreCard } from '@/components/ViewMoreCard'
+import { ProjectCardClientWrapper } from '@/components/ProjectCardClientWrapper'
+import { ViewMoreCardClientWrapper } from '@/components/ViewMoreCardClientWrapper'
 import { type Project } from '@/lib/projects'
 
 interface CategoryFilterProps {
@@ -262,12 +264,16 @@ export const CategoryFilter = React.memo(function CategoryFilter({
                     animate={isNewCard ? { opacity: 1, x: 0 } : false}
                     transition={isNewCard ? { delay: (index - prevCount) * 0.05 } : undefined}
                   >
-                    <ProjectCard
-                      project={project}
-                      priority={index < 4}
+                    <ProjectCardClientWrapper 
+                      project={project} 
                       onClick={onProjectClick}
-                      disableAnimation={!isNewCard}
-                    />
+                    >
+                      <ProjectCard
+                        project={project}
+                        priority={index < 4}
+                        disableAnimation={!isNewCard}
+                      />
+                    </ProjectCardClientWrapper>
                   </motion.div>
                 )
               })}
@@ -280,7 +286,9 @@ export const CategoryFilter = React.memo(function CategoryFilter({
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.1 }}
                 >
-                  <ViewMoreCard onClick={handleLoadMore} />
+                  <ViewMoreCardClientWrapper onClick={handleLoadMore}>
+                    <ViewMoreCard />
+                  </ViewMoreCardClientWrapper>
                 </motion.div>
               )}
             </div>
