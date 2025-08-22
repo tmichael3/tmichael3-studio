@@ -23,10 +23,6 @@ export default function AboutPage() {
       src: "/About_Photos/IMG-20220419-WA0005.webp",
       alt: "TJ Michael portrait"
     },
-    {
-      src: "/About_Photos/19685554491_bec2abece6_b.jpg",
-      alt: "TJ Michael professional"
-    }
   ]
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
@@ -63,68 +59,64 @@ export default function AboutPage() {
     <div className="min-h-screen">
       {/* Custom Hero Section with Static Background and Headshot */}
       <section>
-        <div className="md:container md:mx-auto md:px-4">
-          <div className="h-[60vh] min-h-[400px] sm:h-[55vh] md:h-[55vh] lg:h-[55vh] flex overflow-hidden">
-            <div className="relative flex-1 group overflow-hidden">
-              {/* Static Background Image */}
-              <div className="absolute inset-0 z-0">
-                <div
-                  className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-                  style={{
-                    backgroundImage: `url('/About_Photos/19685554491_bec2abece6_b.jpg')`
-                  }}
-                />
-              </div>
-              
-              {/* Overlay */}
-              <div className="absolute inset-0 bg-black/40" />
-              
-              {/* Hero Content - Split Layout */}
-              <div className="relative z-10 h-full flex flex-col justify-center items-center p-8 md:p-12 text-white">
-                <div className="max-w-6xl w-full">
-                  <div className="grid lg:grid-cols-2 gap-8 items-center">
-                    {/* Left Side - Headshot */}
-                    <motion.div
-                      initial={{ opacity: 0, x: -50 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.6 }}
-                      className="flex justify-center lg:justify-start"
+                <div className="h-[90vh] min-h-[400px] sm:h-[55vh] md:h-[75vh] lg:h-[65vh] flex overflow-hidden">
+          <div className="relative flex-1 group overflow-hidden">
+            {/* Static Background Image */}
+            <div className="absolute inset-0 z-0">
+              <div
+                className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+                style={{
+                  backgroundImage: `url('/About_Photos/19685554491_bec2abece6_b.jpg')`
+                }}
+              />
+            </div>
+            {/* Overlay */}
+            <div className="absolute inset-0 bg-black/40" />
+        
+            {/* Hero Content - Split Layout */}
+            <div className="relative z-10 h-full flex flex-col justify-center items-center p-8 md:p-12 text-white">
+              <div className="max-w-6xl w-full">
+                <div className="grid lg:grid-cols-2 gap-8 items-center">
+                  {/* Left Side - Headshot */}
+                  <motion.div
+                    initial={{ opacity: 0, x: -50 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.6 }}
+                    className="flex justify-center lg:justify-start"
+                  >
+                    <div className="relative w-60 h-60 md:w-100 md:h-100 rounded-full overflow-hidden border-4 border-white/20">
+                      <Image
+                        src="/About_Photos/headshot-small.jpg"
+                        alt="TJ Michael headshot"
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 192px, 256px"
+                        priority
+                      />
+                    </div>
+                  </motion.div>
+                  {/* Right Side - Text Content */}
+                  <motion.div
+                    initial={{ opacity: 0, x: 50 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.6, delay: 0.2 }}
+                    className="text-center lg:text-left space-y-6"
+                  >
+                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
+                      Hi, I&apos;m {aboutInfo.name}
+                    </h1>
+                    <p className="text-xl md:text-2xl leading-relaxed">
+                      {aboutInfo.bio}
+                    </p>
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      className="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white hover:text-black transition-all duration-300 text-lg px-8 py-3"
+                      asChild
                     >
-                      <div className="relative w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden border-4 border-white/20">
-                        <Image
-                          src="/About_Photos/headshot-small.jpg"
-                          alt="TJ Michael headshot"
-                          fill
-                          className="object-cover"
-                          sizes="(max-width: 768px) 192px, 256px"
-                          priority
-                        />
-                      </div>
-                    </motion.div>
-
-                    {/* Right Side - Text Content */}
-                    <motion.div
-                      initial={{ opacity: 0, x: 50 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.6, delay: 0.2 }}
-                      className="text-center lg:text-left space-y-6"
-                    >
-                      <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
-                        Hi, I&apos;m {aboutInfo.name}
-                      </h1>
-                      <p className="text-xl md:text-2xl leading-relaxed">
-                        {aboutInfo.bio}
-                      </p>
-                      <Button
-                        size="lg"
-                        variant="outline"
-                        className="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white hover:text-black transition-all duration-300 text-lg px-8 py-3"
-                        asChild
-                      >
-                        <Link href="/contact">Let&apos;s Work Together</Link>
-                      </Button>
-                    </motion.div>
-                  </div>
+                      <Link href="/contact">Let&apos;s Work Together</Link>
+                    </Button>
+                  </motion.div>
                 </div>
               </div>
             </div>
@@ -132,7 +124,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Experience Section - Moved Above My Story */}
+      {/* Experience Section */}
       <section className="py-16 bg-background">
         <div className="container mx-auto px-4">
           <motion.div
@@ -185,8 +177,6 @@ export default function AboutPage() {
               viewport={{ once: true }}
               className="text-center mb-12"
             >
-              <h2 className="text-3xl md:text-4xl font-bold mb-8">My Story</h2>
-              
               <div className="grid lg:grid-cols-2 gap-12 items-center">
                 {/* Left Side - Enhanced Image Carousel */}
                 <motion.div
@@ -198,16 +188,17 @@ export default function AboutPage() {
                 >
                   {/* Main Image Display */}
                   <div className="relative overflow-hidden rounded-lg bg-background shadow-lg">
-                    <div className="aspect-[4/3] relative">
+                    <div className="relative" style={{ width: '100%', maxWidth: '600px', height: 'auto' }}>
                       <Image
-                        src={aboutImages[currentImageIndex].src}
-                        alt={aboutImages[currentImageIndex].alt}
-                        fill
-                        className="object-cover transition-all duration-500"
-                        sizes="(max-width: 768px) 100vw, 50vw"
+                      src={aboutImages[currentImageIndex].src}
+                      alt={aboutImages[currentImageIndex].alt}
+                      width={600} // set to your image's natural width
+                      height={450} // set to your image's natural height
+                      className="object-cover transition-all duration-500 rounded-lg"
+                      sizes="(max-width: 768px) 100vw, 600px"
                       />
                       {/* Gradient overlay for better text readability */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
                     </div>
                     
                     {/* Navigation Arrows */}

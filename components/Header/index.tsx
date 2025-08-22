@@ -36,10 +36,10 @@ export function Header() {
     { 
       label: 'Services',
       submenu: [
-        { href: '/services/portrait', label: 'Portrait' },
-        { href: '/services/commercial', label: 'Commercial' },
-        { href: '/services/wedding', label: 'Wedding' },
-        { href: '/services/videography', label: 'Videography' },
+        { href: '/services/portrait', label: 'Portrait Photography' },
+        { href: '/services/commercial', label: 'Commercial Services' },
+        { href: '/services/wedding', label: 'Weddings' },
+        { href: '/services/videography', label: 'Video Production' },
       ]
     },
     { href: '/portfolio', label: 'Portfolio' },
@@ -53,7 +53,7 @@ export function Header() {
         <div className="container mx-auto px-4">
           <div className="flex h-16 items-center justify-between">
             {/* Logo */}
-            <Link href="/" className="text-xl font-bold">
+            <Link href="/" className="text-2xl font-bold">
               tmichael3<span className='font-extralight'>.studio</span>
             </Link>
 
