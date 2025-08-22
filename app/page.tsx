@@ -97,7 +97,7 @@ export default function Home() {
       {/* Hero Section - Service Panels */}
       <section>
         <div className="md:container md:mx-auto md:px-4">
-          <div className="h-[65vh] md:h-[55vh] lg:h-[65vh] flex flex-col md:flex-row overflow-hidden">
+          <div className="h-[100vh] md:h-[55vh] lg:h-[65vh] flex flex-col md:flex-row overflow-hidden">
             {services.map((service, index) => (
               <div
                 key={service.title}
@@ -138,7 +138,7 @@ export default function Home() {
                     <Button
                       asChild
                       variant="outline"
-                      className="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white hover:text-black transition-all duration-300 w-fit"
+                      className="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white hover:text-black transition-all duration-300 w-fit h-12 lg:h-12"
                       onMouseEnter={() => setHoveredButton(index)}
                       onMouseLeave={() => setHoveredButton(null)}
                     >
